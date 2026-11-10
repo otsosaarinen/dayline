@@ -68,7 +68,7 @@ scripts        Dev tools (tray icon generator, offscreen screenshot renderer)
 
 ## Data
 
-Stored as JSON in `~/Library/Application Support/dayline/countdowns.json`. Delete that file to reset the app.
+Stored as JSON in `~/Library/Application Support/dayline/countdowns.json`. Delete that file to reset the app. There are no migrations: if an update changes the file format, the old file is ignored and replaced on the next change.
 
 ## Code style
 

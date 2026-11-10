@@ -12,7 +12,7 @@ import { Tooltip } from './Tooltip'
 
 /**
  * One place for everything about categories: filter the list by one, create, edit
- * (rename / recolor) and delete. Replaces the old filter button, new-folder form and Settings list.
+ * (name, color, icon) and delete. The folder icon takes the active filter's color.
  */
 export function CategoryMenu({
     categories,
