@@ -35,6 +35,8 @@ export function CountdownRow({
     const urgency = urgencyOf(item, now)
     const num = bigNumber(item, now)
     const progress = progressOf(item, now)
+    // Rounded down so it only reads 100% once it really is (or the entry is done).
+    const percent = Math.floor(progress * 100)
     const due = new Date(item.dueAt)
 
     // Bright = needs attention, dim = can wait (same rule as the reference).
@@ -149,17 +151,22 @@ export function CountdownRow({
             </div>
 
             {/* Progress from the start date to the due date, lined up under the text. */}
-            <div
-                role="progressbar"
-                aria-valuenow={Math.round(progress * 100)}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                className="mt-2.5 ml-[52px] h-[3px] overflow-hidden rounded-full bg-fg/10"
-            >
+            <div className="mt-2 ml-[52px] flex items-center gap-2.5">
                 <div
-                    className={`h-full rounded-full ${category ? '' : 'bg-muted'}`}
-                    style={{ width: `${progress * 100}%`, backgroundColor: barColor }}
-                />
+                    role="progressbar"
+                    aria-valuenow={percent}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    className="h-[3px] flex-1 overflow-hidden rounded-full bg-fg/10"
+                >
+                    <div
+                        className={`h-full rounded-full ${category ? '' : 'bg-muted'}`}
+                        style={{ width: `${progress * 100}%`, backgroundColor: barColor }}
+                    />
+                </div>
+                <span className="-my-1 w-8 text-right text-[11px] leading-none text-faint tabular-nums">
+                    {percent}%
+                </span>
             </div>
         </div>
     )
