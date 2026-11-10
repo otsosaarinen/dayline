@@ -116,7 +116,7 @@ function MenuBody({
                 <CategoryEditor
                     initialName=""
                     initialColor={nextCategoryColor(categories)}
-                    placeholder="Category name, then Enter"
+                    placeholder="Category name"
                     onSubmit={async (name, color) => {
                         await window.api.invoke('category:add', { name, color })
                         setCreating(false)
@@ -179,6 +179,17 @@ function CategoryEditor({
                     placeholder={placeholder}
                     className="min-w-0 flex-1 bg-transparent text-[14px] text-fg outline-none placeholder:text-faint"
                 />
+                <Tooltip label="Save" keys={['↵']} side="top" align="end">
+                    <button
+                        type="button"
+                        aria-label="Save"
+                        disabled={!name.trim()}
+                        onClick={save}
+                        className="grid size-6 place-items-center rounded-md bg-accent text-accent-fg transition-colors disabled:bg-hover disabled:text-faint"
+                    >
+                        <Check size={14} strokeWidth={2.5} />
+                    </button>
+                </Tooltip>
             </div>
             {pickingColor && (
                 <div className="mt-2.5 flex items-center gap-1.5 pl-0.5">
