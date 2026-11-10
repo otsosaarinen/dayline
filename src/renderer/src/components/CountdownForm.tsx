@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import type { Category } from '@shared/types'
+import type { Category, Countdown } from '@shared/types'
 import { REMINDER_OPTIONS } from '../lib/reminders'
-import { addDays, toDateValue, type TimeFormat } from '../lib/dates'
+import { addDays, toDateValue, toTimeValue, type TimeFormat } from '../lib/dates'
 import { CategorySelect } from './CategorySelect'
 import { DateField } from './DateField'
 import { Kbd } from './Kbd'
@@ -9,21 +9,28 @@ import { SubmitButton } from './SubmitButton'
 import { ReminderSelect } from './ReminderSelect'
 import { TimeField } from './TimeField'
 
-export function AddForm({
+/** Creates a countdown, or edits `countdown` when given (prefilled, saved in place). */
+export function CountdownForm({
+    countdown,
     categories,
     timeFormat,
     onClose
 }: {
+    countdown?: Countdown
     categories: Category[]
     timeFormat: TimeFormat
     onClose: () => void
 }): React.JSX.Element {
-    const [title, setTitle] = useState('')
-    const [description, setDescription] = useState('')
-    const [date, setDate] = useState(() => toDateValue(addDays(new Date(), 1)))
-    const [time, setTime] = useState<string | null>(null) // null = date only
-    const [leads, setLeads] = useState<number[]>([])
-    const [categoryId, setCategoryId] = useState<string | undefined>()
+    const due = countdown && new Date(countdown.dueAt)
+    const [title, setTitle] = useState(countdown?.title ?? '')
+    const [description, setDescription] = useState(countdown?.description ?? '')
+    const [date, setDate] = useState(() => toDateValue(due ?? addDays(new Date(), 1)))
+    // null = date only
+    const [time, setTime] = useState<string | null>(
+        due && countdown.hasTime ? toTimeValue(due) : null
+    )
+    const [leads, setLeads] = useState<number[]>(countdown?.notifyLeadMinutes ?? [])
+    const [categoryId, setCategoryId] = useState<string | undefined>(countdown?.categoryId)
 
     const canSubmit = title.trim().length > 0
 
@@ -31,19 +38,21 @@ export function AddForm({
         e?.preventDefault()
         if (!canSubmit) return
         // Date-only countdowns are stored as local midnight of that date.
-        const due = new Date(`${date}T${time ?? '00:00'}`)
-        if (Number.isNaN(due.getTime())) return
+        const dueAt = new Date(`${date}T${time ?? '00:00'}`)
+        if (Number.isNaN(dueAt.getTime())) return
         const allowed = REMINDER_OPTIONS.filter((o) => time !== null || !o.timedOnly).map(
             (o) => o.minutes
         )
-        await window.api.invoke('countdown:add', {
+        const fields = {
             title: title.trim(),
             description: description.trim() || undefined,
             categoryId,
-            dueAt: due.toISOString(),
+            dueAt: dueAt.toISOString(),
             hasTime: time !== null,
             notifyLeadMinutes: leads.filter((m) => allowed.includes(m))
-        })
+        }
+        if (countdown) await window.api.invoke('countdown:update', countdown.id, fields)
+        else await window.api.invoke('countdown:add', fields)
         onClose()
     }
 
@@ -97,7 +106,12 @@ export function AddForm({
                     Cancel
                     <Kbd>Esc</Kbd>
                 </button>
-                <SubmitButton type="submit" label="Add" keys="⌘↵" disabled={!canSubmit} />
+                <SubmitButton
+                    type="submit"
+                    label={countdown ? 'Save' : 'Add'}
+                    keys="⌘↵"
+                    disabled={!canSubmit}
+                />
             </div>
         </form>
     )

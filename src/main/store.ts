@@ -2,7 +2,14 @@ import Store from 'electron-store'
 import { randomUUID } from 'crypto'
 import { migrateStore } from '@shared/migrate'
 import { StoreSchema } from '@shared/schemas'
-import type { Category, Countdown, CountdownInput, Settings, StoreData } from '@shared/types'
+import type {
+    Category,
+    Countdown,
+    CountdownInput,
+    CountdownPatch,
+    Settings,
+    StoreData
+} from '@shared/types'
 
 const disk = new Store<StoreData>({ name: 'countdowns' })
 
@@ -26,6 +33,15 @@ export function addCountdown(input: CountdownInput): Countdown {
     }
     save({ ...state, countdowns: [...state.countdowns, countdown] })
     return countdown
+}
+
+export function updateCountdown(id: string, patch: CountdownPatch): Countdown | null {
+    const state = getState()
+    const existing = state.countdowns.find((c) => c.id === id)
+    if (!existing) return null
+    const updated: Countdown = { ...existing, ...patch }
+    save({ ...state, countdowns: state.countdowns.map((c) => (c.id === id ? updated : c)) })
+    return updated
 }
 
 export function setCompleted(id: string, done: boolean): Countdown | null {

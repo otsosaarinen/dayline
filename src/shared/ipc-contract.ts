@@ -1,9 +1,17 @@
-import type { Category, Countdown, CountdownInput, Settings, StoreData } from './types'
+import type {
+    Category,
+    Countdown,
+    CountdownInput,
+    CountdownPatch,
+    Settings,
+    StoreData
+} from './types'
 
 /** Renderer -> main request/response channels (ipcRenderer.invoke). */
 export interface IpcInvoke {
     'state:get': { args: []; result: StoreData }
     'countdown:add': { args: [CountdownInput]; result: Countdown }
+    'countdown:update': { args: [string, CountdownPatch]; result: Countdown | null }
     'countdown:complete': { args: [string, boolean]; result: Countdown | null }
     'countdown:delete': { args: [string]; result: boolean }
     'category:add': { args: [Omit<Category, 'id'>]; result: Category }

@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Search, Settings, SquarePen } from 'lucide-react'
+import type { Countdown } from '@shared/types'
 import { useStore } from './store/useStore'
 import { groupCountdowns } from './lib/time'
 import { useNow } from './lib/useNow'
 import { CountdownRow } from './components/CountdownRow'
-import { AddForm } from './components/AddForm'
+import { CountdownForm } from './components/CountdownForm'
 import { CategoryMenu } from './components/CategoryMenu'
 import { GithubLink } from './components/GithubLink'
 import { IconButton } from './components/IconButton'
@@ -18,6 +19,8 @@ export default function App(): React.JSX.Element {
     const init = useStore((s) => s.init)
     // One screen at a time. Opening one replaces the others, so nothing lingers underneath.
     const [view, setView] = useState<'list' | 'add' | 'settings'>('list')
+    // The countdown being edited in the 'add' view's form; null = creating a new one.
+    const [editing, setEditing] = useState<Countdown | null>(null)
     const [categoriesOpen, setCategoriesOpen] = useState(false)
     const [query, setQuery] = useState('')
     const [filterCategory, setFilterCategory] = useState<string | null>(null)
@@ -54,6 +57,13 @@ export default function App(): React.JSX.Element {
     // behind a screen and pops back up later.
     const go = useCallback((next: 'list' | 'add' | 'settings') => {
         setView(next)
+        setEditing(null)
+        setCategoriesOpen(false)
+    }, [])
+
+    const edit = useCallback((countdown: Countdown) => {
+        setView('add')
+        setEditing(countdown)
         setCategoriesOpen(false)
     }, [])
 
@@ -119,7 +129,11 @@ export default function App(): React.JSX.Element {
                     </label>
                 ) : (
                     <h1 className="flex-1 text-[16px] font-semibold tracking-tight">
-                        {view === 'add' ? 'New countdown' : 'Settings'}
+                        {view === 'add'
+                            ? editing
+                                ? 'Edit countdown'
+                                : 'New countdown'
+                            : 'Settings'}
                     </h1>
                 )}
                 <div className="no-drag flex items-center">
@@ -127,8 +141,8 @@ export default function App(): React.JSX.Element {
                         <IconButton
                             label="New countdown"
                             shortcut={['⌘', 'N']}
-                            active={view === 'add'}
-                            tooltipDisabled={view === 'add'}
+                            active={view === 'add' && !editing}
+                            tooltipDisabled={view === 'add' && !editing}
                             onClick={() => go('add')}
                         >
                             <SquarePen size={17} />
@@ -160,7 +174,9 @@ export default function App(): React.JSX.Element {
             {view === 'settings' ? (
                 data && <SettingsPanel settings={data.settings} onBack={() => go('list')} />
             ) : view === 'add' ? (
-                <AddForm
+                <CountdownForm
+                    key={editing?.id ?? 'new'}
+                    countdown={editing ?? undefined}
                     categories={categories}
                     timeFormat={timeFormat}
                     onClose={() => go('list')}
@@ -194,6 +210,7 @@ export default function App(): React.JSX.Element {
                                 item={item}
                                 now={now}
                                 timeFormat={timeFormat}
+                                onEdit={() => edit(item)}
                                 category={
                                     item.categoryId ? categoryById.get(item.categoryId) : undefined
                                 }

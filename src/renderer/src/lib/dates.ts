@@ -5,6 +5,11 @@ export function toDateValue(d: Date): string {
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 }
 
+/** HH:mm in local time. */
+export function toTimeValue(d: Date): string {
+    return `${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
 /** Local midnight of a yyyy-MM-dd value. */
 export function fromDateValue(value: string): Date {
     return new Date(`${value}T00:00`)

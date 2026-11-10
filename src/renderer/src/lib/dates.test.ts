@@ -7,11 +7,19 @@ import {
     formatTimeValue,
     fromDateValue,
     parseTimeInput,
-    toDateValue
+    toDateValue,
+    toTimeValue
 } from './dates'
 import { isSameDay, monthGrid } from './calendar'
 
 const TODAY = new Date(2026, 10, 10, 15, 30) // Tue 10 Nov 2026, mid-afternoon
+
+describe('toTimeValue', () => {
+    it('is zero-padded local HH:mm', () => {
+        expect(toTimeValue(new Date(2026, 0, 5, 9, 5))).toBe('09:05')
+        expect(toTimeValue(new Date(2026, 0, 5, 18, 30))).toBe('18:30')
+    })
+})
 
 describe('date values', () => {
     it('round-trips yyyy-MM-dd in local time', () => {

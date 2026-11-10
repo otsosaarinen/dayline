@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import {
     CategoryPatchSchema,
     CountdownInputSchema,
+    CountdownPatchSchema,
     SettingsPatchSchema,
     CategorySchema
 } from '@shared/schemas'
@@ -30,6 +31,8 @@ export function registerIpc(opts: { hidePopover: () => void; onChange: () => voi
     const handlers: Handlers = {
         'state:get': () => store.getState(),
         'countdown:add': (input) => changed(store.addCountdown(CountdownInputSchema.parse(input))),
+        'countdown:update': (id, patch) =>
+            changed(store.updateCountdown(id, CountdownPatchSchema.parse(patch))),
         'countdown:complete': (id, done) => changed(store.setCompleted(id, done)),
         'countdown:delete': (id) => changed(store.deleteCountdown(id)),
         'category:add': (input) =>

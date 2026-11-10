@@ -21,12 +21,15 @@ export function CountdownRow({
     item,
     now,
     category,
-    timeFormat
+    timeFormat,
+    onEdit
 }: {
     item: Countdown
     now: number
     category?: Category
     timeFormat: TimeFormat
+    /** Clicking the row (or Enter on it) opens the countdown for editing. */
+    onEdit: () => void
 }): React.JSX.Element {
     const done = !!item.completedAt
     const urgency = urgencyOf(item, now)
@@ -41,7 +44,13 @@ export function CountdownRow({
         urgency === 'overdue' ? 'text-danger' : attention ? 'text-info' : 'text-faint'
 
     return (
-        <div className="group flex items-start gap-2.5 rounded-lg px-1.5 py-3 hover:bg-hover">
+        <div
+            role="button"
+            tabIndex={0}
+            onClick={onEdit}
+            onKeyDown={(e) => e.target === e.currentTarget && e.key === 'Enter' && onEdit()}
+            className="group flex cursor-pointer items-start gap-2.5 rounded-lg px-1.5 py-3 hover:bg-hover"
+        >
             <div className="w-[42px] shrink-0 self-center text-center">
                 <div
                     className={`text-[26px] leading-none font-bold tracking-tight tabular-nums ${numberColor[urgency]}`}
@@ -99,7 +108,10 @@ export function CountdownRow({
                     <Tooltip label={done ? 'Mark not done' : 'Mark done'} side="bottom" align="end">
                         <button
                             aria-label={done ? 'Mark not done' : 'Mark done'}
-                            onClick={() => window.api.invoke('countdown:complete', item.id, !done)}
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                void window.api.invoke('countdown:complete', item.id, !done)
+                            }}
                             className={
                                 done
                                     ? 'text-ok'
@@ -114,7 +126,10 @@ export function CountdownRow({
                     <Tooltip label="Delete" side="bottom" align="end">
                         <button
                             aria-label="Delete"
-                            onClick={() => window.api.invoke('countdown:delete', item.id)}
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                void window.api.invoke('countdown:delete', item.id)
+                            }}
                             className="text-faint opacity-0 group-hover:opacity-100 hover:text-danger focus-visible:opacity-100"
                         >
                             <Trash2 size={15} />

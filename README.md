@@ -6,20 +6,20 @@ Built with Electron, React, Tailwind and TypeScript.
 
 ## Features
 
-- Countdowns with a due date, optional time of day, description, category and reminders
+- Countdowns with a due date, optional time of day, description, category and reminders; click one to edit it
 - A big day counter per entry (hours or minutes under a day), sorted by urgency
 - Search, and filtering by category
 - Categories with a color and an icon: create, edit, delete
 - System, dark and light themes, and a 12- or 24-hour clock (24-hour by default)
 
-Not built yet: native notifications (reminders are saved but don't fire), editing an existing countdown, a global shortcut, and launch at login.
+Not built yet: native notifications (reminders are saved but don't fire), a global shortcut, and launch at login.
 
 ## Keyboard shortcuts
 
 | Keys  | Action                                                         |
 | ----- | -------------------------------------------------------------- |
 | `⌘N`  | New countdown                                                  |
-| `⌘↵`  | Add (on the New countdown screen)                              |
+| `⌘↵`  | Add or save (on the New / Edit countdown screen)               |
 | `⌘⇧C` | Open the categories menu                                       |
 | `⌘F`  | Focus search                                                   |
 | `⌘⇧⌫` | Clear the category filter                                      |

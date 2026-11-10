@@ -23,7 +23,7 @@ macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a pop
 
 - Main is the source of truth. The renderer only changes data through IPC.
 - New IPC: add the channel to `ipc-contract.ts` first, then the handler in `ipc.ts` (TS enforces both); validate input with Zod.
-- Zod gotcha: `.partial()` re-applies `.default()`s and would reset fields. Patch schemas (`SettingsPatchSchema`, `CategoryPatchSchema`) are built without defaults. Keep it that way.
+- Zod gotcha: `.partial()` re-applies `.default()`s and would reset fields. Patch schemas (`SettingsPatchSchema`, `CategoryPatchSchema`, `CountdownPatchSchema`) are built without defaults. Keep it that way.
 - Classes only for long-lived main-process state (`TrayController`); everything else is functions.
 - There is deliberately no packaging or distribution setup (no electron-builder, no signing). The app runs from source with `npm run dev`. Don't add one unless asked.
 - Keep the app dock-less (`app.dock.hide()`) and running with no windows open.
@@ -32,7 +32,7 @@ macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a pop
 
 ## Navigation and input
 
-- **One screen at a time:** `App` has a single `view` (`list` | `add` | `settings`). Settings is a full screen with a Back row, and New countdown is a full screen with Cancel and Add at the bottom (leaving it discards the draft). Neither is ever a panel layered over the list. Every screen change goes through `go()` in `App.tsx`, which also closes the categories menu so nothing lingers underneath.
+- **One screen at a time:** `App` has a single `view` (`list` | `add` | `settings`). Settings is a full screen with a Back row, and New countdown is a full screen with Cancel and Add at the bottom (leaving it discards the draft). Clicking a row opens the same screen (`CountdownForm`) prefilled as Edit countdown, saved through `countdown:update`; it is the `add` view with `editing` set, and `go()` clears that. Neither is ever a panel layered over the list. Every screen change goes through `go()` in `App.tsx`, which also closes the categories menu so nothing lingers underneath.
 - **All keyboard shortcuts live in `App.tsx`.** Shortcuts and header icons only _open_ a screen, never toggle it closed; leaving is Back (Settings), Cancel (New countdown) or Esc. Shortcuts must work from any screen. The one exception is ⌘↵ in `AddForm` (it needs the form state); it listens on `window`, not the form, because focus drops to the page background after a dropdown closes.
 - **Escape has a single owner:** an open `Menu` swallows it first, otherwise `App` steps back to the list (or clears search, or hides the popover). Don't add per-component Escape handlers; a second handler on the same keypress would hide the popover.
 
@@ -48,7 +48,7 @@ macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a pop
 - **Colors live in one place:** the COLOR SCHEME block in `styles/globals.css`. Never hardcode colors; use the token classes (`bg-bg`, `bg-elevated`, `bg-hover`, `border-line`, `text-fg`/`muted`/`faint`, `text-accent`, `text-danger`/`warn`/`ok`/`info`) or `var(--…)`. A new color goes in both modes, then in the `@theme` block.
 - **Monochrome chrome:** `--accent` is neutral (near-white in dark). Color is only for meaning (status, category colors). No brand/indigo accent.
 - **Components:** icons are `lucide-react` named imports (no hand-drawn SVGs; the only exception is `GithubIcon`, since lucide has no brand logos). Tooltips are only for icon-only controls (header icons, GitHub, the small row actions): use `Tooltip`, never the native `title`, and suppress one while what it describes is already open (`tooltipDisabled` on `IconButton`). A control with visible text shows its shortcut inline as a `Kbd` pill instead: one small pill per chord (`<Kbd>⌘F</Kbd>`), never a box per key (Add ⌘↵, Cancel Esc, Create ↵, Quit ⌘Q on hover, Clear filter ⌘⇧⌫ under the list, and ⌘F right after the search placeholder). Primary actions (Add, Create, Save) use `SubmitButton`. Dropdowns use `Menu` (`anchorToParent` inside forms).
-- **Add screen:** options are stacked `FieldRow`s (date, time, category, reminders), never side by side. Cancel and Add sit at the bottom with their shortcuts inline as `Kbd` pills; there's no Back row. No native date/time pickers: they draw their own icon and their popup can blur and hide the popover. Dates use the custom `DatePicker`.
+- **New / Edit screen:** options are stacked `FieldRow`s (date, time, category, reminders), never side by side. Cancel and Add (Save when editing) sit at the bottom with their shortcuts inline as `Kbd` pills; there's no Back row. No native date/time pickers: they draw their own icon and their popup can blur and hide the popover. Dates use the custom `DatePicker`.
 - **Categories:** all management (filter, create, edit, delete) is in `CategoryMenu` (the folder icon). Don't add category UI elsewhere.
 - **List rows** (modeled on the Linear/T3 Code sidebar): popover is 340px wide; title 16px, category, date and description 13px, search 16px. Lines: title, category mark (14px) + name + date (+ time), description indented under the name. No per-line icons (calendar, description, bell); the mark-done circle and delete appear only on hover (a finished entry keeps its green check). Bright title = needs attention, dim = can wait. No group headings, no strike-through. The big number on the left is the one intentional deviation.
 - The panel is a soft charcoal (`--bg`), flat, translucent over macOS vibrancy.
@@ -56,5 +56,5 @@ macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a pop
 
 ## Status
 
-Done: tray + popover, countdowns (optional time, description, category, reminders setting), search, categories, themes, quit button, CI.
-Next: scheduler + native notifications, editing a countdown, global shortcut, launch at login.
+Done: tray + popover, countdowns (optional time, description, category, reminders setting, editing), search, categories, themes, quit button, CI.
+Next: scheduler + native notifications, global shortcut, launch at login.

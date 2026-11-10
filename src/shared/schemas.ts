@@ -12,8 +12,8 @@ export const CategorySchema = z.object({
 /** Updating a category: only the provided fields. */
 export const CategoryPatchSchema = CategorySchema.omit({ id: true }).partial()
 
-/** Creating a countdown: omitted optional bits get sensible defaults. */
-export const CountdownInputSchema = z.object({
+/** The user-editable fields of a countdown, without defaults (see the patch schema below). */
+const countdownFields = {
     title: z.string().min(1).max(200),
     description: z.string().max(2000).optional(),
     /**
@@ -21,10 +21,20 @@ export const CountdownInputSchema = z.object({
      * only the calendar date is meaningful (see lib/time.ts).
      */
     dueAt: z.string().datetime({ offset: true }),
-    hasTime: z.boolean().default(true),
+    hasTime: z.boolean(),
     categoryId: z.string().optional(),
-    notifyLeadMinutes: z.array(z.number().int().positive()).default([])
+    notifyLeadMinutes: z.array(z.number().int().positive())
+}
+
+/** Creating a countdown: omitted optional bits get sensible defaults. */
+export const CountdownInputSchema = z.object({
+    ...countdownFields,
+    hasTime: countdownFields.hasTime.default(true),
+    notifyLeadMinutes: countdownFields.notifyLeadMinutes.default([])
 })
+
+/** Editing a countdown: only the provided fields. Built without defaults (`.partial()` would re-apply them). */
+export const CountdownPatchSchema = z.object(countdownFields).partial()
 
 /** A stored countdown. Defaults make older/hand-edited files load safely. */
 export const CountdownSchema = CountdownInputSchema.extend({
