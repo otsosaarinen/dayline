@@ -66,7 +66,7 @@ export function DatePicker({
                             type="button"
                             key={d.getTime()}
                             onClick={() => onSelect(toDateValue(d))}
-                            className={`grid h-8 w-full place-items-center rounded-lg text-[13px] tabular-nums ${
+                            className={`grid h-7 w-full place-items-center rounded-lg text-[13px] tabular-nums ${
                                 isSelected
                                     ? 'bg-accent font-medium text-accent-fg'
                                     : `hover:bg-hover ${

@@ -5,7 +5,7 @@ import trayIcon from '../../resources/trayTemplate.png?asset'
 import trayIcon2x from '../../resources/trayTemplate@2x.png?asset'
 
 const WIDTH = 340
-const HEIGHT = 560
+const HEIGHT = 520
 
 /** Owns the menu bar icon and the popover window that hangs off it. */
 export class TrayController {
