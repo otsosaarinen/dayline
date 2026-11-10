@@ -12,7 +12,7 @@ Built with Electron, React, Tailwind and TypeScript.
 - Categories with colors: create, rename, recolor, delete
 - System, dark and light themes
 
-Not built yet: native notifications (reminders are saved but don't fire), editing an existing countdown, a global shortcut, launch at login, packaged releases.
+Not built yet: native notifications (reminders are saved but don't fire), editing an existing countdown, a global shortcut, and launch at login.
 
 ## Keyboard shortcuts
 
@@ -23,11 +23,12 @@ Not built yet: native notifications (reminders are saved but don't fire), editin
 | `⌘⇧C` | Open the categories menu                                       |
 | `⌘F`  | Focus search                                                   |
 | `⌘,`  | Open settings                                                  |
+| `⌘Q`  | Quit Dayline                                                   |
 | `Esc` | Close the open dropdown, go back a screen, or hide the popover |
 
 ## Getting started
 
-Requires macOS, Node 24 (see `.node-version`, works with [fnm](https://github.com/Schniz/fnm)) and npm.
+You need a Mac, git, npm and Node 24 (see `.node-version`; [fnm](https://github.com/Schniz/fnm) makes switching versions easy).
 
 ```bash
 git clone https://github.com/otsosaarinen/dayline.git
@@ -36,7 +37,10 @@ npm install
 npm run dev
 ```
 
-The app has no Dock icon or window. Look for the clock icon in the menu bar.
+- Look for the hourglass icon in the menu bar and click it. There's no Dock icon or window.
+- Quit with the power button in the bottom-left corner, `⌘Q`, or `Ctrl+C` in the terminal. Run `npm run dev` again to start it.
+- Your countdowns are saved between runs (see [Data](#data)).
+- To update: `git pull && npm install`.
 
 ## Scripts
 
@@ -44,7 +48,6 @@ The app has no Dock icon or window. Look for the clock icon in the menu bar.
 | ------------------- | ---------------------------------------------- |
 | `npm run dev`       | Run the app with hot reload                    |
 | `npm run build`     | Typecheck and build                            |
-| `npm run build:mac` | Build and package a macOS app                  |
 | `npm test`          | Unit tests (Vitest)                            |
 | `npm run typecheck` | Typecheck main/preload and renderer            |
 | `npm run lint`      | ESLint                                         |
@@ -72,4 +75,4 @@ Prettier: 4-space indent, no semicolons, single quotes. The recommended VS Code 
 
 ## License
 
-[MIT](LICENSE) © 2026 Otso Saarinen
+[MIT](LICENSE) © 2026 Otso Saarinen. Icons are from [Lucide](https://lucide.dev) (ISC) and the GitHub mark from Octicons (MIT); see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

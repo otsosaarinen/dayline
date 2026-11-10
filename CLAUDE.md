@@ -6,11 +6,11 @@ macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a pop
 
 ## Commands
 
-- `npm run dev` runs the app. `npm test` is Vitest (pure logic only). `npm run build:mac` packages a dmg.
+- `npm run dev` runs the app. `npm test` is Vitest (pure logic only).
 - Before finishing any change run what CI runs: `npm run format:check && npm run lint && npm run typecheck && npm test`.
 - **Visual check without screen-recording permission:** `npm run build && npx electron scripts/screenshot.cjs out.png ["<js to run in the page>"]` renders the real UI offscreen with seeded sample data (`THEME=light` for light mode); then Read the PNG. Do this after every UI change.
 - **Test keyboard and navigation with real input** (`webContents.sendInputEvent` in an Electron script), not synthetic DOM events. Synthetic events missed a real bug where one Escape press was handled twice.
-- `node scripts/make-tray-icon.mjs` regenerates the tray icons.
+- `npx electron scripts/make-tray-icon.cjs` regenerates the menu bar icons from Lucide's Hourglass. Icons come from permissively licensed sets only; keep `THIRD_PARTY_NOTICES.md` in step when adding a new source.
 
 ## Architecture
 
@@ -50,9 +50,9 @@ macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a pop
 - **Categories:** all management (filter, create, edit, delete) is in `CategoryMenu` (the folder icon). Don't add category UI elsewhere.
 - **List rows** (modeled on the Linear/T3 Code sidebar): popover is 340px wide; title 16px, category 15px, date and description 14px, search 16px; a two-line row is about 70px, plus 21px with a description. Lines: title (optional icon in a 26px indent column), category square + name + date (+ time), description indented under the name. Bright title = needs attention, dim = can wait. No group headings, no strike-through. The big number on the left is the one intentional deviation.
 - The panel is a soft charcoal (`--bg`), flat, translucent over macOS vibrancy.
-- The footer GitHub icon opens `REPO_URL` (`shared/constants.ts`) through the `app:openRepo` IPC. Main only ever opens that fixed https URL.
+- The footer has a Quit button (power icon, `⌘Q`, `app:quit` IPC; the app has no Dock icon or menu to quit from) and the GitHub icon, which opens `REPO_URL` (`shared/constants.ts`) through the `app:openRepo` IPC. Main only ever opens that fixed https URL.
 
 ## Status
 
-Done: tray + popover, countdowns (optional time, description, category, icon, reminders setting), search, categories, themes, CI.
-Next: scheduler + native notifications, editing a countdown, global shortcut, launch at login, packaged releases (real app icon).
+Done: tray + popover, countdowns (optional time, description, category, icon, reminders setting), search, categories, themes, quit button, CI.
+Next: scheduler + native notifications, editing a countdown, global shortcut, launch at login.
