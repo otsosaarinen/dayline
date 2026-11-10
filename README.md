@@ -10,7 +10,7 @@ Built with Electron, React, Tailwind and TypeScript.
 - A big day counter per entry (hours or minutes under a day), sorted by urgency
 - Search, and filtering by category
 - Categories with colors: create, rename, recolor, delete
-- System, dark and light themes
+- System, dark and light themes, and a 12- or 24-hour clock (24-hour by default)
 
 Not built yet: native notifications (reminders are saved but don't fire), editing an existing countdown, a global shortcut, and launch at login.
 
@@ -38,7 +38,7 @@ npm run dev
 ```
 
 - Look for the hourglass icon in the menu bar and click it. There's no Dock icon or window.
-- Quit with the power button in the bottom-left corner, `⌘Q`, or `Ctrl+C` in the terminal. Run `npm run dev` again to start it.
+- Quit with the Quit button in the bottom-left corner, `⌘Q`, or `Ctrl+C` in the terminal. Run `npm run dev` again to start it.
 - Your countdowns are saved between runs (see [Data](#data)).
 - To update: `git pull && npm install`.
 
