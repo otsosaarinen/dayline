@@ -2,12 +2,14 @@ import { Tooltip } from './Tooltip'
 
 /**
  * Square header icon button with a tooltip. `active` = the panel it controls is open / a filter
- * is on. `tooltipDisabled` hides the tooltip while what it opens is already showing.
+ * is on. `color` overrides the icon color (e.g. a category color). `tooltipDisabled` hides the
+ * tooltip while what it opens is already showing.
  */
 export function IconButton({
     label,
     shortcut,
     active,
+    color,
     tooltipDisabled,
     onClick,
     children
@@ -15,6 +17,7 @@ export function IconButton({
     label: string
     shortcut?: string[]
     active?: boolean
+    color?: string
     tooltipDisabled?: boolean
     onClick: () => void
     children: React.ReactNode
@@ -25,6 +28,7 @@ export function IconButton({
                 type="button"
                 aria-label={label}
                 onClick={onClick}
+                style={color ? { color } : undefined}
                 className={`grid size-[33px] place-items-center rounded-lg hover:text-fg ${
                     active ? 'text-accent' : 'text-fg/60'
                 }`}

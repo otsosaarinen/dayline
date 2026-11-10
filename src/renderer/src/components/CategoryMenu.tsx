@@ -27,6 +27,7 @@ export function CategoryMenu({
     open: boolean
     onOpenChange: (open: boolean) => void
 }): React.JSX.Element {
+    const active = categories.find((c) => c.id === activeFilter)
     return (
         <Menu
             align="right"
@@ -38,10 +39,11 @@ export function CategoryMenu({
                     label="Categories"
                     shortcut={['⌘', '⇧', 'C']}
                     active={!!activeFilter}
+                    color={active && `var(--cat-${active.color})`}
                     tooltipDisabled={menuOpen}
                     onClick={toggle}
                 >
-                    <Folder size={17} />
+                    <Folder size={17} fill={active ? 'currentColor' : 'none'} />
                 </IconButton>
             )}
         >
