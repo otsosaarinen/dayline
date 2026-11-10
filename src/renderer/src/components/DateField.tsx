@@ -1,4 +1,3 @@
-import { CalendarDays } from 'lucide-react'
 import { addDays, addMonths, describeDate, toDateValue } from '../lib/dates'
 import { DatePicker } from './DatePicker'
 import { FieldRow } from './FieldRow'
@@ -11,11 +10,15 @@ const PRESETS: { label: string; resolve: (today: Date) => Date }[] = [
     { label: 'In a month', resolve: (t) => addMonths(t, 1) }
 ]
 
-/** Required due date: quick presets plus a month calendar. */
+/** A required date (start or due): quick presets plus a month calendar. */
 export function DateField({
+    label,
+    icon,
     value,
     onChange
 }: {
+    label: string
+    icon: React.ReactNode
     value: string
     onChange: (value: string) => void
 }): React.JSX.Element {
@@ -25,8 +28,8 @@ export function DateField({
             panelClassName="w-[300px]"
             trigger={({ toggle }) => (
                 <FieldRow
-                    icon={<CalendarDays size={16} />}
-                    label="Date"
+                    icon={icon}
+                    label={label}
                     value={describeDate(value)}
                     active
                     onClick={toggle}

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
+import { CalendarDays, CalendarPlus } from 'lucide-react'
 import type { Category, Countdown } from '@shared/types'
 import { REMINDER_OPTIONS } from '../lib/reminders'
-import { addDays, toDateValue, toTimeValue, type TimeFormat } from '../lib/dates'
+import { addDays, fromDateValue, toDateValue, toTimeValue, type TimeFormat } from '../lib/dates'
 import { CategorySelect } from './CategorySelect'
 import { DateField } from './DateField'
 import { Kbd } from './Kbd'
@@ -24,6 +25,11 @@ export function CountdownForm({
     const due = countdown && new Date(countdown.dueAt)
     const [title, setTitle] = useState(countdown?.title ?? '')
     const [description, setDescription] = useState(countdown?.description ?? '')
+    // Start defaults to today (the day it's created). The two dates never end up reversed:
+    // moving one past the other drags the other along.
+    const [start, setStart] = useState(() =>
+        toDateValue(countdown ? new Date(countdown.startAt) : new Date())
+    )
     const [date, setDate] = useState(() => toDateValue(due ?? addDays(new Date(), 1)))
     // null = date only
     const [time, setTime] = useState<string | null>(
@@ -47,6 +53,7 @@ export function CountdownForm({
             title: title.trim(),
             description: description.trim() || undefined,
             categoryId,
+            startAt: fromDateValue(start).toISOString(),
             dueAt: dueAt.toISOString(),
             hasTime: time !== null,
             notifyLeadMinutes: leads.filter((m) => allowed.includes(m))
@@ -87,7 +94,24 @@ export function CountdownForm({
             />
 
             <div className="-mx-1.5 mt-4 border-t border-line pt-1.5">
-                <DateField value={date} onChange={setDate} />
+                <DateField
+                    label="Start"
+                    icon={<CalendarPlus size={16} />}
+                    value={start}
+                    onChange={(v) => {
+                        setStart(v)
+                        if (v > date) setDate(v)
+                    }}
+                />
+                <DateField
+                    label="Due"
+                    icon={<CalendarDays size={16} />}
+                    value={date}
+                    onChange={(v) => {
+                        setDate(v)
+                        if (v < start) setStart(v)
+                    }}
+                />
                 <TimeField value={time} format={timeFormat} onChange={setTime} />
                 <CategorySelect
                     categories={categories}

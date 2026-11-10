@@ -24,7 +24,11 @@ describe('settings defaults', () => {
 })
 
 describe('countdown schemas', () => {
-    const base = { title: 'Essay', dueAt: '2026-12-01T00:00:00.000Z' }
+    const base = {
+        title: 'Essay',
+        startAt: '2026-11-01T00:00:00.000Z',
+        dueAt: '2026-12-01T00:00:00.000Z'
+    }
 
     it('defaults a new countdown to having a time and no reminders', () => {
         expect(CountdownInputSchema.parse(base)).toMatchObject({

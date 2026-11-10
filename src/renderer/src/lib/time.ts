@@ -124,3 +124,22 @@ export function bigNumber(c: Countdown, now: number): BigNumber {
     if (abs >= MIN) return { value: String(Math.floor(abs / MIN)), unit: 'min' }
     return { value: '<1', unit: 'min' }
 }
+
+/**
+ * How far along a countdown is, 0..1, from its start date to its due date. Done = full.
+ * Date-only countdowns count calendar days like everything else; timed ones use the clock.
+ */
+export function progressOf(c: Countdown, now: number): number {
+    if (c.completedAt) return 1
+    const start = new Date(c.startAt).getTime()
+    const due = new Date(c.dueAt).getTime()
+    const [elapsed, total] = c.hasTime
+        ? [now - start, due - start]
+        : [
+              startOfLocalDay(now) - startOfLocalDay(start),
+              startOfLocalDay(due) - startOfLocalDay(start)
+          ]
+    // Nothing to measure (starts and is due at the same moment): empty until it arrives.
+    if (total <= 0) return elapsed >= 0 && now >= due ? 1 : 0
+    return Math.min(1, Math.max(0, elapsed / total))
+}

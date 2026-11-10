@@ -21,6 +21,8 @@ const countdownFields = {
      * only the calendar date is meaningful (see lib/time.ts).
      */
     dueAt: z.string().datetime({ offset: true }),
+    /** Local midnight of the start date (default: the day it was created). Progress runs from here to `dueAt`. */
+    startAt: z.string().datetime({ offset: true }),
     hasTime: z.boolean(),
     categoryId: z.string().optional(),
     notifyLeadMinutes: z.array(z.number().int().positive())
@@ -58,7 +60,7 @@ export const SettingsPatchSchema = z
     .partial()
 
 export const StoreSchema = z.object({
-    schemaVersion: z.literal(2).default(2),
+    schemaVersion: z.literal(3).default(3),
     countdowns: z.array(CountdownSchema).default([]),
     categories: z.array(CategorySchema).default([]),
     settings: SettingsSchema.default(SettingsSchema.parse({}))

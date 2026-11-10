@@ -26,7 +26,7 @@ const base = (o) => ({
     ...o
 })
 const seed = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     settings: { theme: process.env.THEME || 'dark' },
     categories: [
         { id: 'c1', name: 'Thesis', color: 'orange', icon: 'GraduationCap' },
@@ -36,6 +36,7 @@ const seed = {
     countdowns: [
         base({
             id: '1',
+            startAt: day(-2),
             title: 'Physics lab report',
             categoryId: 'c2',
             dueAt: inHours(5),
@@ -44,6 +45,7 @@ const seed = {
         }),
         base({
             id: '2',
+            startAt: day(-9),
             title: 'Pay tuition fee',
             categoryId: 'c3',
             dueAt: day(-2),
@@ -51,6 +53,7 @@ const seed = {
         }),
         base({
             id: '3',
+            startAt: day(-6),
             title: 'Submit thesis draft to supervisor',
             categoryId: 'c1',
             dueAt: day(12),
@@ -59,6 +62,7 @@ const seed = {
         }),
         base({
             id: '4',
+            startAt: day(-5),
             title: 'Renew passport',
             categoryId: 'c3',
             dueAt: day(45),
@@ -66,6 +70,7 @@ const seed = {
         }),
         base({
             id: '5',
+            startAt: day(-8),
             title: 'Read the attention paper',
             dueAt: day(3),
             hasTime: false,

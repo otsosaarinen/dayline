@@ -27,7 +27,7 @@ macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a pop
 - Classes only for long-lived main-process state (`TrayController`); everything else is functions.
 - There is deliberately no packaging or distribution setup (no electron-builder, no signing). The app runs from source with `npm run dev`. Don't add one unless asked.
 - Keep the app dock-less (`app.dock.hide()`) and running with no windows open.
-- Store has `schemaVersion` (now 2); bump it and add a step to `shared/migrate.ts` (with a test) when the persisted shape changes. Files are migrated before validation, never rejected.
+- Store has `schemaVersion`; bump it when the persisted shape changes. There are deliberately no migrations (local dev): a file that no longer validates resets to empty on the next change.
 - Don't leave dead code, unused files or unused exports. Remove it, don't comment it out.
 
 ## Navigation and input
@@ -38,6 +38,7 @@ macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a pop
 
 ## Data model
 
+- A countdown has `startAt` (local midnight of its start date, default: the day it's created) and `dueAt`. The form keeps them in order by dragging the other date along. `progressOf` (`lib/time.ts`) gives the 0..1 progress between them: clock-based when it has a time, calendar days when date-only; done = full.
 - Time is optional. `hasTime: false` means date-only: `dueAt` is local midnight of that date and only the calendar date counts (`lib/time.ts` uses calendar days, never hours). Date-only reminders should fire at a fixed morning time (planned: 09:00 local).
 - Times of day are shown through `formatClock` / `formatTimeValue` / `formatTimeOfDay` (`lib/dates.ts`) using the `timeFormat` setting (`24h` default). Never use `toLocaleTimeString` or `<input type="time">`: both follow the system locale and ignore the setting. Typed times go through `parseTimeInput`.
 - A category stores a color _name_ (`CATEGORY_COLORS`), rendered via `var(--cat-<name>)`.
@@ -48,9 +49,9 @@ macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a pop
 - **Colors live in one place:** the COLOR SCHEME block in `styles/globals.css`. Never hardcode colors; use the token classes (`bg-bg`, `bg-elevated`, `bg-hover`, `border-line`, `text-fg`/`muted`/`faint`, `text-accent`, `text-danger`/`warn`/`ok`/`info`) or `var(--…)`. A new color goes in both modes, then in the `@theme` block.
 - **Monochrome chrome:** `--accent` is neutral (near-white in dark). Color is only for meaning (status, category colors). No brand/indigo accent.
 - **Components:** icons are `lucide-react` named imports (no hand-drawn SVGs; the only exception is `GithubIcon`, since lucide has no brand logos). Tooltips are only for icon-only controls (header icons, GitHub, the small row actions): use `Tooltip`, never the native `title`, and suppress one while what it describes is already open (`tooltipDisabled` on `IconButton`). A control with visible text shows its shortcut inline as a `Kbd` pill instead: one small pill per chord (`<Kbd>⌘F</Kbd>`), never a box per key (Add ⌘↵, Cancel Esc, Create ↵, Quit ⌘Q on hover, Clear filter ⌘⇧⌫ under the list, and ⌘F right after the search placeholder). Primary actions (Add, Create, Save) use `SubmitButton`. Dropdowns use `Menu` (`anchorToParent` inside forms).
-- **New / Edit screen:** options are stacked `FieldRow`s (date, time, category, reminders), never side by side. Cancel and Add (Save when editing) sit at the bottom with their shortcuts inline as `Kbd` pills; there's no Back row. No native date/time pickers: they draw their own icon and their popup can blur and hide the popover. Dates use the custom `DatePicker`.
+- **New / Edit screen:** options are stacked `FieldRow`s (start, due, time, category, reminders), never side by side. Cancel and Add (Save when editing) sit at the bottom with their shortcuts inline as `Kbd` pills; there's no Back row. No native date/time pickers: they draw their own icon and their popup can blur and hide the popover. Dates use the custom `DatePicker`.
 - **Categories:** all management (filter, create, edit, delete) is in `CategoryMenu` (the folder icon). Don't add category UI elsewhere.
-- **List rows** (modeled on the Linear/T3 Code sidebar): popover is 340px wide; title 16px, category, date and description 13px, search 16px. Lines: title, category mark (14px) + name + date (+ time), description indented under the name. No per-line icons (calendar, description, bell); the mark-done circle and delete appear only on hover (a finished entry keeps its green check). Bright title = needs attention, dim = can wait. No group headings, no strike-through. The big number on the left is the one intentional deviation.
+- **List rows** (modeled on the Linear/T3 Code sidebar): popover is 340px wide; title 16px, category, date and description 13px, search 16px. Lines: title, category mark (14px) + name + date (+ time), description indented under the name, then a 3px progress bar under the text (green when done, red when overdue, else the category color). No per-line icons (calendar, description, bell); the mark-done circle and delete appear only on hover (a finished entry keeps its green check). Bright title = needs attention, dim = can wait. No group headings, no strike-through. The big number on the left is the one intentional deviation.
 - The panel is a soft charcoal (`--bg`), flat, translucent over macOS vibrancy.
 - The footer has a Quit button (power icon, "Quit" and `⌘Q`, `app:quit` IPC; the app has no Dock icon or menu to quit from) and the GitHub icon, which opens `REPO_URL` (`shared/constants.ts`) through the `app:openRepo` IPC. Main only ever opens that fixed https URL.
 

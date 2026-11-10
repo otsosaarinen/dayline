@@ -1,6 +1,5 @@
 import Store from 'electron-store'
 import { randomUUID } from 'crypto'
-import { migrateStore } from '@shared/migrate'
 import { StoreSchema } from '@shared/schemas'
 import type {
     Category,
@@ -13,9 +12,9 @@ import type {
 
 const disk = new Store<StoreData>({ name: 'countdowns' })
 
-/** Upgrades old files, then validates on every read so a hand-edited/corrupt file can't crash the app. */
+/** Always validates on read so a hand-edited/corrupt file can't crash the app (it resets instead). */
 export function getState(): StoreData {
-    const parsed = StoreSchema.safeParse(migrateStore(disk.store))
+    const parsed = StoreSchema.safeParse(disk.store)
     return parsed.success ? parsed.data : StoreSchema.parse({})
 }
 
