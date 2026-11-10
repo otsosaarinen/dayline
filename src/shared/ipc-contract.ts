@@ -12,6 +12,7 @@ export interface IpcInvoke {
     'settings:update': { args: [Partial<Settings>]; result: Settings }
     'popover:hide': { args: []; result: void }
     'app:openRepo': { args: []; result: void }
+    'app:quit': { args: []; result: void }
 }
 
 /** Main -> renderer push events. */

@@ -9,6 +9,7 @@ import { CategoryMenu } from './components/CategoryMenu'
 import { GithubLink } from './components/GithubLink'
 import { IconButton } from './components/IconButton'
 import { Kbd } from './components/Kbd'
+import { QuitButton } from './components/QuitButton'
 import { SettingsPanel } from './components/SettingsPanel'
 
 export default function App(): React.JSX.Element {
@@ -76,6 +77,9 @@ export default function App(): React.JSX.Element {
             }
             if ((e.metaKey || e.ctrlKey) && e.key === ',') {
                 go('settings')
+            }
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'q') {
+                window.api.invoke('app:quit')
             }
         }
         window.addEventListener('keydown', onKey)
@@ -173,7 +177,8 @@ export default function App(): React.JSX.Element {
                 </main>
             )}
 
-            <footer className="flex justify-end px-3 pb-2.5">
+            <footer className="flex items-center justify-between px-3 pb-2.5">
+                <QuitButton />
                 <GithubLink />
             </footer>
         </div>

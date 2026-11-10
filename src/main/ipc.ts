@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import {
     CategoryPatchSchema,
     CountdownInputSchema,
@@ -43,7 +43,8 @@ export function registerIpc(opts: { hidePopover: () => void; onChange: () => voi
         // Only ever opens the fixed repository URL, never a URL supplied by the renderer.
         'app:openRepo': () => {
             if (REPO_URL.startsWith('https://')) void shell.openExternal(REPO_URL)
-        }
+        },
+        'app:quit': () => app.quit()
     }
 
     for (const channel of Object.keys(handlers) as (keyof IpcInvoke)[]) {
