@@ -1,4 +1,4 @@
-import { CircleCheck, CircleDashed, Trash2 } from 'lucide-react'
+import { ArrowRight, CircleCheck, CircleDashed, Trash2 } from 'lucide-react'
 import type { Category, Countdown } from '@shared/types'
 import { formatTimeOfDay, type TimeFormat } from '../lib/dates'
 import { bigNumber, progressOf, urgencyOf, type Urgency } from '../lib/time'
@@ -12,6 +12,8 @@ const numberColor: Record<Urgency, string> = {
     later: 'text-fg',
     done: 'text-faint'
 }
+
+const shortDate = (d: Date): string => d.toLocaleDateString([], { month: 'short', day: 'numeric' })
 
 /** Category mark size, and the indent (mark + gap) the description lines up under. */
 const MARK = 14
@@ -38,6 +40,7 @@ export function CountdownRow({
     // Rounded down so it only reads 100% once it really is (or the entry is done).
     const percent = Math.floor(progress * 100)
     const due = new Date(item.dueAt)
+    const start = new Date(item.startAt)
 
     // Bright = needs attention, dim = can wait (same rule as the reference).
     const attention = urgency === 'overdue' || urgency === 'soon' || urgency === 'today'
@@ -84,15 +87,14 @@ export function CountdownRow({
                                 </span>
                             </span>
                         )}
-                        <span className="shrink-0 whitespace-nowrap text-faint">
-                            Due{' '}
-                            {due.toLocaleDateString([], {
-                                month: 'short',
-                                day: 'numeric'
-                            })}
+                        {/* start -> due, together so they read as one range */}
+                        <span className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-faint">
+                            {shortDate(start)}
+                            <ArrowRight size={12} />
+                            {shortDate(due)}
                             {item.hasTime && (
                                 <span className={done ? '' : attention ? statusClass : ''}>
-                                    {' · '}
+                                    {'· '}
                                     {formatTimeOfDay(due, timeFormat)}
                                 </span>
                             )}
@@ -152,12 +154,6 @@ export function CountdownRow({
 
             {/* Progress from the start date to the due date, lined up under the text. */}
             <div className="mt-2 ml-[52px] flex items-center gap-2.5">
-                <span className="-my-1 w-11 text-[11px] leading-none whitespace-nowrap text-faint tabular-nums">
-                    {new Date(item.startAt).toLocaleDateString([], {
-                        month: 'short',
-                        day: 'numeric'
-                    })}
-                </span>
                 <div
                     role="progressbar"
                     aria-valuenow={percent}
