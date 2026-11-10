@@ -1,18 +1,29 @@
 # Countdown
 
-A macOS menu bar app for countdowns and reminders: school deadlines, or anything else. Click the icon in the menu bar to see everything that's counting down. Light, dark and system themes.
+A macOS menu bar app for countdowns and reminders: school deadlines, or anything else. Click the icon in the menu bar to see everything that's counting down.
 
 Built with Electron, React, Tailwind and TypeScript.
 
 ## Features
 
 - Countdowns with a due date, optional time of day, description, category, icon and reminders
-- Big day counter per entry (switches to hours/minutes under a day), sorted by urgency
-- Search, plus filter by category
-- Categories with colors (create, rename, recolor, delete)
-- System / Dark / Light theme
+- A big day counter per entry (hours or minutes under a day), sorted by urgency
+- Search, and filtering by category
+- Categories with colors: create, rename, recolor, delete
+- System, dark and light themes
 
-Not built yet: native notifications (reminders are saved but don't fire), editing an existing countdown, global shortcut, launch at login, packaged releases.
+Not built yet: native notifications (reminders are saved but don't fire), editing an existing countdown, a global shortcut, launch at login, packaged releases.
+
+## Keyboard shortcuts
+
+| Keys  | Action                                                         |
+| ----- | -------------------------------------------------------------- |
+| `⌘N`  | New countdown                                                  |
+| `⌘↵`  | Add (on the New countdown screen)                              |
+| `⌘⇧C` | Open the categories menu                                       |
+| `⌘F`  | Focus search                                                   |
+| `⌘,`  | Open settings                                                  |
+| `Esc` | Close the open dropdown, go back a screen, or hide the popover |
 
 ## Getting started
 
@@ -37,7 +48,7 @@ The app has no Dock icon or window. Look for the clock icon in the menu bar.
 | `npm run lint`      | ESLint                                         |
 | `npm run format`    | Format with Prettier (`format:check` to check) |
 
-CI (`.github/workflows/ci.yml`) runs format check, lint, typecheck, tests and a macOS build on every push and PR.
+CI (`.github/workflows/ci.yml`) runs the format check, lint, typecheck, tests and a macOS build on every push and pull request.
 
 ## Project layout
 
@@ -49,8 +60,10 @@ src/renderer   React UI
 scripts        Dev tools (tray icon generator, offscreen screenshot renderer)
 ```
 
-Data is stored as JSON in `~/Library/Application Support/countdown-app/`.
+## Data
+
+Stored as JSON in `~/Library/Application Support/countdown-app/countdowns.json`. Delete that file to reset the app.
 
 ## Code style
 
-Prettier: 4-space indent, no semicolons, single quotes. VS Code extensions (ESLint, Prettier) are recommended in `.vscode/extensions.json`.
+Prettier: 4-space indent, no semicolons, single quotes. The recommended VS Code extensions (ESLint, Prettier) are listed in `.vscode/extensions.json`.

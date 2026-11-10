@@ -91,7 +91,8 @@ app.whenReady().then(async () => {
     // Stand-in for the desktop behind the translucent popover.
     await win.webContents.insertCSS('html{background:#2a2c4a !important}')
     if (pageScript) {
-        await win.webContents.executeJavaScript(pageScript)
+        const result = await win.webContents.executeJavaScript(pageScript)
+        if (result !== undefined) console.log('page result:', JSON.stringify(result))
         await sleep(500)
     }
     const img = await win.webContents.capturePage()
