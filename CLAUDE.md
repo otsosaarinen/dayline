@@ -25,6 +25,7 @@ macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a pop
 - New IPC: add the channel to `ipc-contract.ts` first, then the handler in `ipc.ts` (TS enforces both); validate input with Zod.
 - Zod gotcha: `.partial()` re-applies `.default()`s and would reset fields. Patch schemas (`SettingsPatchSchema`, `CategoryPatchSchema`) are built without defaults. Keep it that way.
 - Classes only for long-lived main-process state (`TrayController`); everything else is functions.
+- There is deliberately no packaging or distribution setup (no electron-builder, no signing). The app runs from source with `npm run dev`. Don't add one unless asked.
 - Keep the app dock-less (`app.dock.hide()`) and running with no windows open. macOS only.
 - Store has `schemaVersion`; bump it and add a migration when the persisted shape changes.
 - Don't leave dead code, unused files or unused exports. Remove it, don't comment it out.
