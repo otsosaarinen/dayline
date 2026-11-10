@@ -69,3 +69,7 @@ Stored as JSON in `~/Library/Application Support/countdown-app/countdowns.json`.
 ## Code style
 
 Prettier: 4-space indent, no semicolons, single quotes. The recommended VS Code extensions (ESLint, Prettier) are listed in `.vscode/extensions.json`.
+
+## License
+
+[MIT](LICENSE) © 2026 Otso Saarinen

@@ -2,6 +2,8 @@
     "name": "countdown-app",
     "version": "1.0.0",
     "description": "macOS menu bar app for countdowns and reminders",
+    "license": "MIT",
+    "author": "Otso Saarinen",
     "main": "./out/main/index.js",
     "scripts": {
         "format": "prettier --write .",
