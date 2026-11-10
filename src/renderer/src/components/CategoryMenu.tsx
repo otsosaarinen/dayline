@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Check, Folder, Pencil, Plus, Trash2 } from 'lucide-react'
 import { CATEGORY_COLORS, type CategoryColor } from '@shared/constants'
 import type { Category } from '@shared/types'
@@ -169,14 +169,30 @@ function CategoryEditor({
 }): React.JSX.Element {
     const [name, setName] = useState(initialName)
     const [color, setColor] = useState<CategoryColor>(initialColor)
+    const ref = useRef<HTMLDivElement>(null)
 
     const save = (): void => {
         const trimmed = name.trim()
         if (trimmed) void onSubmit(trimmed, color)
     }
 
+    // On the window, not the input: after clicking a swatch, focus is on the swatch (or the
+    // page background), where an input-level handler would never see Enter.
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent): void => {
+            const target = e.target as Node
+            const inEditor = target === document.body || ref.current?.contains(target)
+            if (e.key === 'Enter' && inEditor) {
+                e.preventDefault()
+                save()
+            }
+        }
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+    })
+
     return (
-        <div className="px-2.5 py-1.5">
+        <div ref={ref} className="px-2.5 py-1.5">
             <div className="flex items-center gap-2">
                 <Folder size={18} className="shrink-0 text-faint" />
                 <input
@@ -185,7 +201,6 @@ function CategoryEditor({
                     maxLength={40}
                     onChange={(e) => setName(e.target.value)}
                     onFocus={(e) => e.currentTarget.select()}
-                    onKeyDown={(e) => e.key === 'Enter' && save()}
                     placeholder={placeholder}
                     className="min-w-0 flex-1 bg-transparent text-[14px] text-fg outline-none placeholder:text-faint"
                 />
