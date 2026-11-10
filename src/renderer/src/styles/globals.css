@@ -1,41 +1,89 @@
 @import 'tailwindcss';
 
-/* Design tokens. Window is vibrancy-backed, so surfaces are translucent.
-   Theme follows nativeTheme (set from main), so prefers-color-scheme is enough. */
+/* ==========================================================================
+   COLOR SCHEME
+   The single place colors are defined. Everything else (Tailwind classes,
+   component styles) reads these variables, so re-theming = editing this block.
+
+   Light values live in :root. Dark values override them below.
+   Which one applies follows `prefers-color-scheme`, which Electron drives from
+   `nativeTheme.themeSource` (Settings → Appearance: System / Dark / Light).
+
+   The window uses macOS vibrancy, so backgrounds are translucent on purpose.
+   Reuse in CSS:   color: var(--text-muted);
+   Reuse in React: className="text-muted bg-hover border-line"
+   Category colors: style={{ backgroundColor: `var(--cat-${category.color})` }}
+   ========================================================================== */
 :root {
-    --bg: rgba(250, 250, 251, 0.78);
-    --surface: rgba(255, 255, 255, 0.7);
-    --surface-hover: rgba(0, 0, 0, 0.04);
-    --border: rgba(0, 0, 0, 0.08);
+    color-scheme: light dark; /* native controls (date picker, scrollbars) follow the theme */
+
+    /* Surfaces */
+    --bg: rgba(250, 250, 251, 0.92); /* popover background */
+    --hover: rgba(0, 0, 0, 0.045); /* row + button hover */
+    --elevated: #ffffff; /* opaque menus / dropdowns */
+    --border: rgba(0, 0, 0, 0.09);
+
+    /* Text */
     --text: #1b1b1f;
     --text-muted: #6b6b76;
     --text-faint: #9a9aa5;
-    --accent: #5e6ad2;
-    --accent-fg: #ffffff;
-    --danger: #d6453d;
-    --warn: #c77b12;
-    --ok: #2f9e6b;
+
+    /* Accent is deliberately neutral (monochrome UI). Color is reserved for meaning:
+       status (danger/warn/ok/info) and category colors. */
+    --accent: #1b1b1f; /* primary button, selected day, active icon */
+    --accent-fg: #ffffff; /* text on top of --accent */
+    --danger: #d6453d; /* overdue */
+    --warn: #c77b12; /* due soon */
+    --ok: #2f9e6b; /* completed */
+    --info: #3b7fd9; /* in-progress / urgent status */
+
+    /* Category colors (same in light and dark). Stored on a category by name. */
+    --cat-blue: #4f8df5;
+    --cat-orange: #ee8f3a;
+    --cat-pink: #d9559f;
+    --cat-red: #e5584f;
+    --cat-green: #34b26b;
+    --cat-purple: #8b6bf0;
+    --cat-teal: #2fb5b0;
+    --cat-gray: #7b7b86;
 }
+
 @media (prefers-color-scheme: dark) {
     :root {
-        --bg: rgba(24, 24, 27, 0.72);
-        --surface: rgba(255, 255, 255, 0.04);
-        --surface-hover: rgba(255, 255, 255, 0.06);
-        --border: rgba(255, 255, 255, 0.09);
-        --text: #ececef;
-        --text-muted: #9b9ba6;
-        --text-faint: #6b6b76;
-        --accent: #7c85f0;
+        --bg: rgba(
+            27,
+            27,
+            29,
+            0.97
+        ); /* soft charcoal: raise the numbers for lighter, lower for deeper black */
+        --hover: rgba(255, 255, 255, 0.05);
+        --elevated: #252527;
+        --border: rgba(255, 255, 255, 0.055);
+
+        --text: #f4f4f4;
+        --text-muted: #858585;
+        --text-faint: #666668;
+
+        --accent: #f4f4f4;
+        --accent-fg: #111113;
         --danger: #f0716a;
         --warn: #e0a043;
         --ok: #4cc38a;
+        --info: #5b9df0;
     }
 }
 
+/* ==========================================================================
+   TAILWIND MAPPING
+   Exposes the variables above as utility classes:
+   bg-bg  bg-elevated  bg-hover  border-line  text-fg  text-muted  text-faint
+   bg-accent  text-accent-fg  text-danger  text-warn  text-ok  text-info
+   Add a new color: define it in the block above, then map it here.
+   ========================================================================== */
 @theme inline {
     --color-bg: var(--bg);
-    --color-surface: var(--surface);
-    --color-hover: var(--surface-hover);
+    --color-hover: var(--hover);
+    --color-elevated: var(--elevated);
     --color-line: var(--border);
     --color-fg: var(--text);
     --color-muted: var(--text-muted);
@@ -45,16 +93,22 @@
     --color-danger: var(--danger);
     --color-warn: var(--warn);
     --color-ok: var(--ok);
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+    --color-info: var(--info);
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
 }
 
+/* ==========================================================================
+   BASE
+   ========================================================================== */
 html,
 body,
 #root {
     height: 100%;
     margin: 0;
-    background: transparent;
+    background: transparent; /* the window is transparent; the vibrancy shows through */
 }
+
 body {
     font-family: var(--font-sans);
     font-size: 13px;
@@ -63,13 +117,8 @@ body {
     user-select: none;
     overflow: hidden;
 }
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 8px;
-}
+
+/* Frameless window: header is draggable, interactive children opt out. */
 .drag {
     -webkit-app-region: drag;
 }

@@ -7,26 +7,29 @@ const MIN = 60_000
 const HOUR = 60 * MIN
 const DAY = 24 * HOUR
 
-/** "2d 4h", "3h 12m", "8m", "now"; prefixed handled by caller for overdue. */
-export function formatRemaining(ms: number): string {
-    const abs = Math.abs(ms)
-    if (abs < MIN) return ms < 0 ? 'just now' : '<1m'
-    const d = Math.floor(abs / DAY)
-    const h = Math.floor((abs % DAY) / HOUR)
-    const m = Math.floor((abs % HOUR) / MIN)
-    if (d > 0) return h > 0 ? `${d}d ${h}h` : `${d}d`
-    if (h > 0) return m > 0 ? `${h}h ${m}m` : `${h}h`
-    return `${m}m`
+function startOfLocalDay(ms: number): number {
+    const d = new Date(ms)
+    d.setHours(0, 0, 0, 0)
+    return d.getTime()
 }
 
-export function remainingLabel(c: Countdown, now: number): string {
-    if (c.completedAt) return 'Done'
-    const ms = new Date(c.dueAt).getTime() - now
-    return ms < 0 ? `${formatRemaining(ms)} ago` : formatRemaining(ms)
+/**
+ * Whole calendar days from `now` to the due date (negative = past, 0 = today).
+ * Only meaningful for date-only countdowns, where the time of day doesn't exist.
+ * `Math.round` absorbs 23h/25h days around daylight saving changes.
+ */
+function calendarDaysUntil(c: Countdown, now: number): number {
+    return Math.round((startOfLocalDay(new Date(c.dueAt).getTime()) - startOfLocalDay(now)) / DAY)
 }
 
 export function urgencyOf(c: Countdown, now: number): Urgency {
     if (c.completedAt) return 'done'
+    if (!c.hasTime) {
+        const days = calendarDaysUntil(c, now)
+        if (days < 0) return 'overdue'
+        if (days === 0) return 'soon'
+        return days === 1 ? 'today' : 'later'
+    }
     const ms = new Date(c.dueAt).getTime() - now
     if (ms < 0) return 'overdue'
     if (ms < 3 * HOUR) return 'soon'
@@ -42,6 +45,12 @@ function endOfLocalDay(now: number): number {
 
 export function groupOf(c: Countdown, now: number): Group {
     if (c.completedAt) return 'Done'
+    if (!c.hasTime) {
+        const days = calendarDaysUntil(c, now)
+        if (days < 0) return 'Overdue'
+        if (days === 0) return 'Today'
+        return days <= 6 ? 'This week' : 'Later'
+    }
     const due = new Date(c.dueAt).getTime()
     if (due < now) return 'Overdue'
     const eod = endOfLocalDay(now)
@@ -76,8 +85,42 @@ export function groupCountdowns(
 /** True when anything is due within the hour (renderer ticks every second instead of every 30s). */
 export function needsFastTick(list: Countdown[], now: number): boolean {
     return list.some((c) => {
-        if (c.completedAt) return false
+        if (c.completedAt || !c.hasTime) return false
         const ms = new Date(c.dueAt).getTime() - now
         return ms > 0 && ms < HOUR
     })
+}
+
+export interface BigNumber {
+    value: string
+    unit: string
+}
+
+/** The large figure shown on the left of a row: days until due, dropping to hours/minutes under a day. */
+export function bigNumber(c: Countdown, now: number): BigNumber {
+    if (c.completedAt) return { value: '✓', unit: 'done' }
+    if (!c.hasTime) {
+        const days = calendarDaysUntil(c, now)
+        if (days < 0) return { value: `${-days}d`, unit: 'overdue' }
+        if (days === 0) return { value: '0', unit: 'today' }
+        return { value: String(days), unit: days === 1 ? 'day' : 'days' }
+    }
+    const ms = new Date(c.dueAt).getTime() - now
+    const abs = Math.abs(ms)
+    if (ms < 0) {
+        if (abs < MIN) return { value: '<1m', unit: 'overdue' }
+        if (abs < HOUR) return { value: `${Math.floor(abs / MIN)}m`, unit: 'overdue' }
+        if (abs < DAY) return { value: `${Math.floor(abs / HOUR)}h`, unit: 'overdue' }
+        return { value: `${Math.floor(abs / DAY)}d`, unit: 'overdue' }
+    }
+    if (abs >= DAY) {
+        const n = Math.floor(abs / DAY)
+        return { value: String(n), unit: n === 1 ? 'day' : 'days' }
+    }
+    if (abs >= HOUR) {
+        const n = Math.floor(abs / HOUR)
+        return { value: String(n), unit: n === 1 ? 'hr' : 'hrs' }
+    }
+    if (abs >= MIN) return { value: String(Math.floor(abs / MIN)), unit: 'min' }
+    return { value: '<1', unit: 'min' }
 }
