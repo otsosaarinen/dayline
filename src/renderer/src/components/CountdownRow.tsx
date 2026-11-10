@@ -152,6 +152,12 @@ export function CountdownRow({
 
             {/* Progress from the start date to the due date, lined up under the text. */}
             <div className="mt-2 ml-[52px] flex items-center gap-2.5">
+                <span className="-my-1 w-11 text-[11px] leading-none whitespace-nowrap text-faint tabular-nums">
+                    {new Date(item.startAt).toLocaleDateString([], {
+                        month: 'short',
+                        day: 'numeric'
+                    })}
+                </span>
                 <div
                     role="progressbar"
                     aria-valuenow={percent}
