@@ -1,11 +1,17 @@
 import { Monitor, Moon, Sun, type LucideIcon } from 'lucide-react'
 import type { Settings } from '@shared/types'
+import { formatClock } from '../lib/dates'
 import { BackButton } from './BackButton'
 
 const THEMES: { value: Settings['theme']; label: string; hint: string; Icon: LucideIcon }[] = [
     { value: 'system', label: 'System', hint: 'Matches your Mac', Icon: Monitor },
     { value: 'dark', label: 'Dark', hint: 'Always dark', Icon: Moon },
     { value: 'light', label: 'Light', hint: 'Always light', Icon: Sun }
+]
+
+const TIME_FORMATS: { value: Settings['timeFormat']; label: string }[] = [
+    { value: '24h', label: '24-hour' },
+    { value: '12h', label: '12-hour' }
 ]
 
 export function SettingsPanel({
@@ -41,6 +47,33 @@ export function SettingsPanel({
                             }`}
                         >
                             <Icon size={16} />
+                        </button>
+                    ))}
+                </div>
+            </section>
+
+            <section className="flex items-center justify-between">
+                <div>
+                    <div className="text-[15px] text-fg">Time format</div>
+                    <div className="text-[13px] text-faint">
+                        Shows times like {formatClock(15, 0, settings.timeFormat)}
+                    </div>
+                </div>
+                <div className="flex rounded-lg border border-line p-0.5">
+                    {TIME_FORMATS.map(({ value, label }) => (
+                        <button
+                            key={value}
+                            aria-pressed={settings.timeFormat === value}
+                            onClick={() =>
+                                window.api.invoke('settings:update', { timeFormat: value })
+                            }
+                            className={`h-7 rounded-md px-2.5 text-xs transition-colors ${
+                                settings.timeFormat === value
+                                    ? 'bg-hover text-fg'
+                                    : 'text-faint hover:text-fg'
+                            }`}
+                        >
+                            {label}
                         </button>
                     ))}
                 </div>

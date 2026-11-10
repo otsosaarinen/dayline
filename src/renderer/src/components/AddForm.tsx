@@ -1,20 +1,21 @@
 import { useState } from 'react'
 import type { Category } from '@shared/types'
 import { REMINDER_OPTIONS } from '../lib/reminders'
-import { addDays, toDateValue } from '../lib/dates'
-import { BackButton } from './BackButton'
+import { addDays, toDateValue, type TimeFormat } from '../lib/dates'
 import { CategorySelect } from './CategorySelect'
 import { DateField } from './DateField'
 import { IconPicker } from './IconPicker'
+import { Kbd } from './Kbd'
 import { ReminderSelect } from './ReminderSelect'
-import { Tooltip } from './Tooltip'
 import { TimeField } from './TimeField'
 
 export function AddForm({
     categories,
+    timeFormat,
     onClose
 }: {
     categories: Category[]
+    timeFormat: TimeFormat
     onClose: () => void
 }): React.JSX.Element {
     const [title, setTitle] = useState('')
@@ -54,11 +55,8 @@ export function AddForm({
             onKeyDown={(e) => {
                 if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) void submit()
             }}
-            className="relative flex-1 px-5 pb-4"
+            className="relative flex-1 px-5 pt-2 pb-4"
         >
-            <div className="mb-4">
-                <BackButton onClick={onClose} />
-            </div>
             <input
                 autoFocus
                 value={title}
@@ -76,7 +74,7 @@ export function AddForm({
 
             <div className="-mx-1.5 mt-4 border-t border-line pt-1.5">
                 <DateField value={date} onChange={setDate} />
-                <TimeField value={time} onChange={setTime} />
+                <TimeField value={time} format={timeFormat} onChange={setTime} />
                 <CategorySelect
                     categories={categories}
                     value={categoryId}
@@ -86,16 +84,26 @@ export function AddForm({
                 <ReminderSelect value={leads} onChange={setLeads} withTime={time !== null} />
             </div>
 
-            <div className="mt-3 flex justify-end">
-                <Tooltip label="Add" keys={['⌘', '↵']} side="top" align="end">
-                    <button
-                        type="submit"
-                        disabled={!canSubmit}
-                        className="rounded-lg bg-accent px-3.5 py-1 text-[13px] font-medium text-accent-fg disabled:opacity-30"
-                    >
-                        Add
-                    </button>
-                </Tooltip>
+            <div className="mt-3 flex items-center justify-end gap-2">
+                <button
+                    type="button"
+                    onClick={onClose}
+                    className="flex items-center gap-2 rounded-lg px-3 py-1 text-[13px] text-muted hover:bg-hover hover:text-fg"
+                >
+                    Cancel
+                    <Kbd>Esc</Kbd>
+                </button>
+                <button
+                    type="submit"
+                    disabled={!canSubmit}
+                    className="flex items-center gap-2 rounded-lg bg-accent py-1 pr-2 pl-3.5 text-[13px] font-medium text-accent-fg disabled:opacity-30"
+                >
+                    Add
+                    <span className="flex gap-0.5">
+                        <Kbd onAccent>⌘</Kbd>
+                        <Kbd onAccent>↵</Kbd>
+                    </span>
+                </button>
             </div>
         </form>
     )

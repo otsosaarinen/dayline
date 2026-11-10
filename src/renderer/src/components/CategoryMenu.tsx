@@ -32,11 +32,12 @@ export function CategoryMenu({
             panelClassName="w-64"
             open={open}
             onOpenChange={onOpenChange}
-            trigger={({ toggle }) => (
+            trigger={({ toggle, open: menuOpen }) => (
                 <IconButton
                     label="Categories"
                     shortcut={['⌘', '⇧', 'C']}
                     active={!!activeFilter}
+                    tooltipDisabled={menuOpen}
                     onClick={toggle}
                 >
                     <Folder size={17} />

@@ -34,12 +34,18 @@ export const CountdownSchema = CountdownInputSchema.extend({
 })
 
 const ThemeSchema = z.enum(['system', 'light', 'dark'])
+const TimeFormatSchema = z.enum(['24h', '12h'])
 
 /** Stored settings: defaults fill anything missing. */
-export const SettingsSchema = z.object({ theme: ThemeSchema.default('system') })
+export const SettingsSchema = z.object({
+    theme: ThemeSchema.default('system'),
+    timeFormat: TimeFormatSchema.default('24h')
+})
 
 /** Changing settings: only the provided keys. Built without defaults (`.partial()` would re-apply them). */
-export const SettingsPatchSchema = z.object({ theme: ThemeSchema }).partial()
+export const SettingsPatchSchema = z
+    .object({ theme: ThemeSchema, timeFormat: TimeFormatSchema })
+    .partial()
 
 export const StoreSchema = z.object({
     schemaVersion: z.literal(1).default(1),

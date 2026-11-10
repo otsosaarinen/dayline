@@ -13,6 +13,11 @@ describe('settings defaults', () => {
         expect(StoreSchema.parse({}).settings.theme).toBe('system')
     })
 
+    it('defaults to a 24-hour clock', () => {
+        expect(SettingsSchema.parse({}).timeFormat).toBe('24h')
+        expect(StoreSchema.parse({}).settings.timeFormat).toBe('24h')
+    })
+
     it('keeps an explicit theme choice', () => {
         expect(SettingsSchema.parse({ theme: 'light' }).theme).toBe('light')
     })
@@ -35,6 +40,8 @@ describe('countdown schemas', () => {
     it('patches settings without applying defaults for omitted keys', () => {
         expect(SettingsPatchSchema.parse({ theme: 'light' })).toEqual({ theme: 'light' })
         expect(SettingsPatchSchema.parse({})).toEqual({})
+        expect(SettingsPatchSchema.parse({ timeFormat: '12h' })).toEqual({ timeFormat: '12h' })
+        expect(() => SettingsPatchSchema.parse({ timeFormat: '13h' })).toThrow()
     })
 })
 

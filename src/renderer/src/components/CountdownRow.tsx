@@ -1,5 +1,6 @@
 import { AlignLeft, Bell, CalendarDays, CircleCheck, CircleDashed, Trash2 } from 'lucide-react'
 import type { Category, Countdown } from '@shared/types'
+import { formatTimeOfDay, type TimeFormat } from '../lib/dates'
 import { bigNumber, urgencyOf, type Urgency } from '../lib/time'
 import { CategorySquare } from './CategorySquare'
 import { EntryIcon } from './EntryIcon'
@@ -18,11 +19,13 @@ const INDENT = 26
 export function CountdownRow({
     item,
     now,
-    category
+    category,
+    timeFormat
 }: {
     item: Countdown
     now: number
     category?: Category
+    timeFormat: TimeFormat
 }): React.JSX.Element {
     const done = !!item.completedAt
     const urgency = urgencyOf(item, now)
@@ -85,7 +88,7 @@ export function CountdownRow({
                         {item.hasTime && (
                             <span className={done ? '' : attention ? statusClass : ''}>
                                 {' · '}
-                                {due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                                {formatTimeOfDay(due, timeFormat)}
                             </span>
                         )}
                     </span>
