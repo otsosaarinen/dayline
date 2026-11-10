@@ -73,6 +73,40 @@ function MenuBody({
 }): React.JSX.Element {
     const [creating, setCreating] = useState(false)
     const [editingId, setEditingId] = useState<string | null>(null)
+    const editing = categories.find((c) => c.id === editingId)
+
+    // Creating or editing takes over the whole menu: the other categories are just noise then.
+    if (editing) {
+        return (
+            <CategoryEditor
+                key={editing.id}
+                initialName={editing.name}
+                initialColor={editing.color}
+                initialIcon={editing.icon}
+                placeholder="Category name"
+                submitLabel="Save"
+                onSubmit={async (name, color, icon) => {
+                    await window.api.invoke('category:update', editing.id, { name, color, icon })
+                    setEditingId(null)
+                }}
+            />
+        )
+    }
+    if (creating) {
+        return (
+            <CategoryEditor
+                initialName=""
+                initialColor={nextCategoryColor(categories)}
+                initialIcon={undefined}
+                placeholder="Category name"
+                submitLabel="Create"
+                onSubmit={async (name, color, icon) => {
+                    await window.api.invoke('category:add', { name, color, icon })
+                    setCreating(false)
+                }}
+            />
+        )
+    }
 
     return (
         <div>
@@ -80,80 +114,43 @@ function MenuBody({
                 <span className="text-muted">All categories</span>
             </MenuItem>
 
-            {categories.map((c) =>
-                editingId === c.id ? (
-                    <CategoryEditor
-                        key={c.id}
-                        initialName={c.name}
-                        initialColor={c.color}
-                        initialIcon={c.icon}
-                        placeholder="Category name"
-                        submitLabel="Save"
-                        onSubmit={async (name, color, icon) => {
-                            await window.api.invoke('category:update', c.id, { name, color, icon })
-                            setEditingId(null)
-                        }}
-                    />
-                ) : (
-                    <div key={c.id} className="group/row relative">
-                        <MenuItem selected={activeFilter === c.id} onClick={() => onFilter(c.id)}>
-                            <CategoryMark category={c} size={18} />
-                            <span className="truncate">{c.name}</span>
-                        </MenuItem>
-                        <div className="absolute top-1/2 right-1.5 hidden -translate-y-1/2 items-center group-hover/row:flex">
-                            <Tooltip label="Edit" side="top">
-                                <button
-                                    type="button"
-                                    aria-label={`Edit ${c.name}`}
-                                    onClick={() => {
-                                        setCreating(false)
-                                        setEditingId(c.id)
-                                    }}
-                                    className="rounded-md p-1 text-faint hover:text-fg"
-                                >
-                                    <Pencil size={14} />
-                                </button>
-                            </Tooltip>
-                            <Tooltip label="Delete" side="top" align="end">
-                                <button
-                                    type="button"
-                                    aria-label={`Delete ${c.name}`}
-                                    onClick={() => window.api.invoke('category:delete', c.id)}
-                                    className="rounded-md p-1 text-faint hover:text-danger"
-                                >
-                                    <Trash2 size={14} />
-                                </button>
-                            </Tooltip>
-                        </div>
+            {categories.map((c) => (
+                <div key={c.id} className="group/row relative">
+                    <MenuItem selected={activeFilter === c.id} onClick={() => onFilter(c.id)}>
+                        <CategoryMark category={c} size={18} />
+                        <span className="truncate">{c.name}</span>
+                    </MenuItem>
+                    <div className="absolute top-1/2 right-1.5 hidden -translate-y-1/2 items-center group-hover/row:flex">
+                        <Tooltip label="Edit" side="top">
+                            <button
+                                type="button"
+                                aria-label={`Edit ${c.name}`}
+                                onClick={() => setEditingId(c.id)}
+                                className="rounded-md p-1 text-faint hover:text-fg"
+                            >
+                                <Pencil size={14} />
+                            </button>
+                        </Tooltip>
+                        <Tooltip label="Delete" side="top" align="end">
+                            <button
+                                type="button"
+                                aria-label={`Delete ${c.name}`}
+                                onClick={() => window.api.invoke('category:delete', c.id)}
+                                className="rounded-md p-1 text-faint hover:text-danger"
+                            >
+                                <Trash2 size={14} />
+                            </button>
+                        </Tooltip>
                     </div>
-                )
-            )}
+                </div>
+            ))}
 
             <div className="my-1 h-px bg-line" />
 
-            {creating ? (
-                <CategoryEditor
-                    initialName=""
-                    initialColor={nextCategoryColor(categories)}
-                    initialIcon={undefined}
-                    placeholder="Category name"
-                    submitLabel="Create"
-                    onSubmit={async (name, color, icon) => {
-                        await window.api.invoke('category:add', { name, color, icon })
-                        setCreating(false)
-                    }}
-                />
-            ) : (
-                <MenuItem
-                    onClick={() => {
-                        setEditingId(null)
-                        setCreating(true)
-                    }}
-                >
-                    <Plus size={16} className="text-muted" />
-                    <span className="text-muted">New category</span>
-                </MenuItem>
-            )}
+            <MenuItem onClick={() => setCreating(true)}>
+                <Plus size={16} className="text-muted" />
+                <span className="text-muted">New category</span>
+            </MenuItem>
         </div>
     )
 }
