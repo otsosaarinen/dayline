@@ -6,7 +6,7 @@ macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a pop
 
 ## Commands
 
-- `npm run dev` runs the app. `npm test` is Vitest (pure logic only).
+- `npm run dev` runs the app (`--watch`: main-process changes restart it; without that, a running app keeps the old main code). `npm test` is Vitest (pure logic only).
 - Before finishing any change run what CI runs: `npm run format:check && npm run lint && npm run typecheck && npm test`.
 - **Visual check without screen-recording permission:** `npm run build && npx electron scripts/screenshot.cjs out.png ["<js to run in the page>"]` renders the real UI offscreen with seeded sample data (`THEME=light` for light mode); then Read the PNG. Do this after every UI change.
 - **Test keyboard and navigation with real input** (`webContents.sendInputEvent` in an Electron script), not synthetic DOM events. Synthetic events missed a real bug where one Escape press was handled twice.

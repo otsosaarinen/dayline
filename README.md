@@ -47,7 +47,7 @@ npm run dev
 
 | Command             | What it does                                   |
 | ------------------- | ---------------------------------------------- |
-| `npm run dev`       | Run the app with hot reload                    |
+| `npm run dev`       | Run the app (reloads on code changes)          |
 | `npm run build`     | Typecheck and build                            |
 | `npm test`          | Unit tests (Vitest)                            |
 | `npm run typecheck` | Typecheck main/preload and renderer            |
