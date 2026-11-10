@@ -10,8 +10,8 @@ const THEMES: { value: Settings['theme']; label: string; hint: string; Icon: Luc
 ]
 
 const TIME_FORMATS: { value: Settings['timeFormat']; label: string }[] = [
-    { value: '24h', label: '24-hour' },
-    { value: '12h', label: '12-hour' }
+    { value: '24h', label: '24h' },
+    { value: '12h', label: '12h' }
 ]
 
 export function SettingsPanel({
@@ -67,7 +67,7 @@ export function SettingsPanel({
                             onClick={() =>
                                 window.api.invoke('settings:update', { timeFormat: value })
                             }
-                            className={`h-7 rounded-md px-2.5 text-xs transition-colors ${
+                            className={`h-7 min-w-9 rounded-md px-2 text-xs transition-colors ${
                                 settings.timeFormat === value
                                     ? 'bg-hover text-fg'
                                     : 'text-faint hover:text-fg'

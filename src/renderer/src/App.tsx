@@ -98,13 +98,12 @@ export default function App(): React.JSX.Element {
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder="Search"
-                            className="w-full bg-transparent text-[16px] text-fg outline-none placeholder:text-fg/60"
+                            className="field-sizing-content max-w-full min-w-0 bg-transparent text-[16px] text-fg outline-none placeholder:text-fg/60"
                         />
                         {/* Shortcut hint: gone while the field is focused or has text. */}
                         {!query && (
-                            <span className="mr-1 flex gap-0.5 group-focus-within/search:hidden">
-                                <Kbd>⌘</Kbd>
-                                <Kbd>F</Kbd>
+                            <span className="group-focus-within/search:hidden">
+                                <Kbd>⌘F</Kbd>
                             </span>
                         )}
                     </label>
@@ -169,8 +168,7 @@ export default function App(): React.JSX.Element {
                                         'Try a different search or filter.'
                                     ) : (
                                         <span className="inline-flex items-center gap-1">
-                                            Press <Kbd>⌘</Kbd>
-                                            <Kbd>N</Kbd> to add your first one
+                                            Press <Kbd>⌘N</Kbd> to add your first one
                                         </span>
                                     )}
                                 </div>

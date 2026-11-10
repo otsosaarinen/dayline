@@ -6,6 +6,7 @@ import { CATEGORY_SHEEN, nextCategoryColor } from '../lib/categories'
 import { CategorySquare } from './CategorySquare'
 import { IconButton } from './IconButton'
 import { Menu, MenuItem } from './Menu'
+import { SubmitButton } from './SubmitButton'
 import { Tooltip } from './Tooltip'
 
 /**
@@ -83,6 +84,7 @@ function MenuBody({
                         initialName={c.name}
                         initialColor={c.color}
                         placeholder="Category name"
+                        submitLabel="Save"
                         onSubmit={async (name, color) => {
                             await window.api.invoke('category:update', c.id, { name, color })
                             setEditingId(null)
@@ -130,6 +132,7 @@ function MenuBody({
                     initialName=""
                     initialColor={nextCategoryColor(categories)}
                     placeholder="Category name"
+                    submitLabel="Create"
                     onSubmit={async (name, color) => {
                         await window.api.invoke('category:add', { name, color })
                         setCreating(false)
@@ -155,11 +158,13 @@ function CategoryEditor({
     initialName,
     initialColor,
     placeholder,
+    submitLabel,
     onSubmit
 }: {
     initialName: string
     initialColor: CategoryColor
     placeholder: string
+    submitLabel: string
     onSubmit: (name: string, color: CategoryColor) => Promise<void>
 }): React.JSX.Element {
     const [name, setName] = useState(initialName)
@@ -171,7 +176,7 @@ function CategoryEditor({
     }
 
     return (
-        <div className="p-1.5">
+        <div className="px-2.5 py-1.5">
             <div className="flex items-center gap-2">
                 <Folder size={18} className="shrink-0 text-faint" />
                 <input
@@ -184,17 +189,14 @@ function CategoryEditor({
                     placeholder={placeholder}
                     className="min-w-0 flex-1 bg-transparent text-[14px] text-fg outline-none placeholder:text-faint"
                 />
-                <Tooltip label="Save" keys={['↵']} side="top" align="end">
-                    <button
-                        type="button"
-                        aria-label="Save"
+                <div className="-mr-1.5">
+                    <SubmitButton
+                        label={submitLabel}
+                        keys="↵"
                         disabled={!name.trim()}
                         onClick={save}
-                        className="grid size-6 place-items-center rounded-md bg-accent text-accent-fg transition-colors disabled:bg-hover disabled:text-faint"
-                    >
-                        <Check size={14} strokeWidth={2.5} />
-                    </button>
-                </Tooltip>
+                    />
+                </div>
             </div>
             {/* The one place color is shown and chosen (the check marks the selected one). */}
             <div className="mt-2.5 flex items-center gap-1.5">

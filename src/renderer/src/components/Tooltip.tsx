@@ -32,13 +32,7 @@ export function Tooltip({
                     } ${align === 'end' ? 'right-0' : 'left-1/2 -translate-x-1/2'}`}
                 >
                     {label}
-                    {keys && (
-                        <span className="flex gap-0.5">
-                            {keys.map((k) => (
-                                <Kbd key={k}>{k}</Kbd>
-                            ))}
-                        </span>
-                    )}
+                    {keys && <Kbd>{keys.join('')}</Kbd>}
                 </span>
             )}
         </span>

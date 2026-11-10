@@ -6,6 +6,7 @@ import { CategorySelect } from './CategorySelect'
 import { DateField } from './DateField'
 import { IconPicker } from './IconPicker'
 import { Kbd } from './Kbd'
+import { SubmitButton } from './SubmitButton'
 import { ReminderSelect } from './ReminderSelect'
 import { TimeField } from './TimeField'
 
@@ -88,22 +89,12 @@ export function AddForm({
                 <button
                     type="button"
                     onClick={onClose}
-                    className="flex items-center gap-2 rounded-lg px-3 py-1 text-[13px] text-muted hover:bg-hover hover:text-fg"
+                    className="flex h-6 items-center gap-1.5 rounded-md px-2.5 text-[13px] text-muted hover:bg-hover hover:text-fg"
                 >
                     Cancel
                     <Kbd>Esc</Kbd>
                 </button>
-                <button
-                    type="submit"
-                    disabled={!canSubmit}
-                    className="flex items-center gap-2 rounded-lg bg-accent py-1 pr-2 pl-3.5 text-[13px] font-medium text-accent-fg disabled:opacity-30"
-                >
-                    Add
-                    <span className="flex gap-0.5">
-                        <Kbd onAccent>⌘</Kbd>
-                        <Kbd onAccent>↵</Kbd>
-                    </span>
-                </button>
+                <SubmitButton type="submit" label="Add" keys="⌘↵" disabled={!canSubmit} />
             </div>
         </form>
     )
