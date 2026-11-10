@@ -41,16 +41,8 @@ export function CountdownRow({
     const attention = urgency === 'overdue' || urgency === 'soon' || urgency === 'today'
     const titleClass = done ? 'text-faint' : attention ? 'text-fg' : 'text-muted'
     const nameClass = done ? 'text-faint' : attention ? 'text-fg/80' : 'text-muted'
-    // Meaning first: finished = green, overdue = red; otherwise the category's color (neutral
-    // when it has none).
-    const barClass = done
-        ? 'bg-ok'
-        : urgency === 'overdue'
-          ? 'bg-danger'
-          : category
-            ? ''
-            : 'bg-muted'
-    const barColor = barClass || !category ? undefined : `var(--cat-${category.color})`
+    // The bar is the category's color (neutral grey when it has none), whatever the status.
+    const barColor = category ? `var(--cat-${category.color})` : undefined
     const statusClass =
         urgency === 'overdue' ? 'text-danger' : attention ? 'text-info' : 'text-faint'
 
@@ -164,7 +156,7 @@ export function CountdownRow({
                 className="mt-2.5 ml-[52px] h-[3px] overflow-hidden rounded-full bg-fg/10"
             >
                 <div
-                    className={`h-full rounded-full ${barClass}`}
+                    className={`h-full rounded-full ${category ? '' : 'bg-muted'}`}
                     style={{ width: `${progress * 100}%`, backgroundColor: barColor }}
                 />
             </div>
