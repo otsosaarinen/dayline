@@ -1,9 +1,10 @@
-import { AlignLeft, Bell, CalendarDays, CircleCheck, CircleDashed, Trash2 } from 'lucide-react'
+import { CircleCheck, CircleDashed, Trash2 } from 'lucide-react'
 import type { Category, Countdown } from '@shared/types'
 import { formatTimeOfDay, type TimeFormat } from '../lib/dates'
 import { bigNumber, urgencyOf, type Urgency } from '../lib/time'
 import { CategorySquare } from './CategorySquare'
 import { EntryIcon } from './EntryIcon'
+import { Tooltip } from './Tooltip'
 
 const numberColor: Record<Urgency, string> = {
     overdue: 'text-danger',
@@ -38,7 +39,6 @@ export function CountdownRow({
     const nameClass = done ? 'text-faint' : attention ? 'text-fg/80' : 'text-muted'
     const statusClass =
         urgency === 'overdue' ? 'text-danger' : attention ? 'text-info' : 'text-faint'
-    const hasReminders = item.notifyLeadMinutes.length > 0
 
     return (
         <div className="group flex items-start gap-2.5 rounded-lg px-1.5 py-3 hover:bg-hover">
@@ -79,8 +79,7 @@ export function CountdownRow({
                             </span>
                         </span>
                     )}
-                    <span className="flex shrink-0 items-center gap-1.5 text-[14px] whitespace-nowrap text-faint">
-                        <CalendarDays size={15} />
+                    <span className="shrink-0 text-[14px] whitespace-nowrap text-faint">
                         {due.toLocaleDateString([], {
                             month: 'short',
                             day: 'numeric'
@@ -94,45 +93,43 @@ export function CountdownRow({
                     </span>
                 </div>
 
-                {/* Line 3: description (wraps under the name, like the branch line) */}
+                {/* Line 3: description, indented to line up under the category name */}
                 {item.description && (
                     <div
-                        className="mt-0.5 flex h-[21px] items-center gap-1.5 text-[14px] text-faint"
+                        className="mt-0.5 h-[21px] truncate text-[14px] leading-[21px] text-faint"
                         style={{ paddingLeft: category ? INDENT : 0 }}
                     >
-                        <AlignLeft size={15} className="shrink-0" />
-                        <span className="truncate">{item.description}</span>
+                        {item.description}
                     </div>
                 )}
             </div>
 
             <div className="flex shrink-0 flex-col items-end self-start pr-1.5">
-                <div className="flex h-[22px] items-center gap-1.5">
-                    <button
-                        aria-label={done ? 'Mark not done' : 'Mark done'}
-                        title={done ? 'Mark not done' : 'Mark done'}
-                        onClick={() => window.api.invoke('countdown:complete', item.id, !done)}
-                        className={done ? 'text-ok' : `${statusClass} hover:text-ok`}
-                    >
-                        {done ? <CircleCheck size={18} /> : <CircleDashed size={18} />}
-                    </button>
+                <div className="flex h-[22px] items-center">
+                    <Tooltip label={done ? 'Mark not done' : 'Mark done'} side="bottom" align="end">
+                        <button
+                            aria-label={done ? 'Mark not done' : 'Mark done'}
+                            onClick={() => window.api.invoke('countdown:complete', item.id, !done)}
+                            className={
+                                done
+                                    ? 'text-ok'
+                                    : 'text-faint opacity-0 group-hover:opacity-100 hover:text-ok focus-visible:opacity-100'
+                            }
+                        >
+                            {done ? <CircleCheck size={18} /> : <CircleDashed size={18} />}
+                        </button>
+                    </Tooltip>
                 </div>
                 <div className="mt-0.5 flex h-[22px] items-center">
-                    {hasReminders && (
-                        <Bell
-                            size={15}
-                            aria-label="Has reminders"
-                            className="text-faint group-hover:hidden"
-                        />
-                    )}
-                    <button
-                        aria-label="Delete"
-                        title="Delete"
-                        onClick={() => window.api.invoke('countdown:delete', item.id)}
-                        className="hidden text-faint hover:text-danger group-hover:block"
-                    >
-                        <Trash2 size={15} />
-                    </button>
+                    <Tooltip label="Delete" side="bottom" align="end">
+                        <button
+                            aria-label="Delete"
+                            onClick={() => window.api.invoke('countdown:delete', item.id)}
+                            className="text-faint opacity-0 group-hover:opacity-100 hover:text-danger focus-visible:opacity-100"
+                        >
+                            <Trash2 size={15} />
+                        </button>
+                    </Tooltip>
                 </div>
             </div>
         </div>
