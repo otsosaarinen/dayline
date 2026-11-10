@@ -1,7 +1,7 @@
 import type { Countdown } from '@shared/types'
 
-export type Urgency = 'overdue' | 'soon' | 'today' | 'later' | 'done'
-export type Group = 'Overdue' | 'Today' | 'This week' | 'Later' | 'Done'
+export type Urgency = 'overdue' | 'soon' | 'today' | 'later'
+export type Group = 'Overdue' | 'Today' | 'This week' | 'Later'
 
 const MIN = 60_000
 const HOUR = 60 * MIN
@@ -23,7 +23,6 @@ function calendarDaysUntil(c: Countdown, now: number): number {
 }
 
 export function urgencyOf(c: Countdown, now: number): Urgency {
-    if (c.completedAt) return 'done'
     if (!c.hasTime) {
         const days = calendarDaysUntil(c, now)
         if (days < 0) return 'overdue'
@@ -44,7 +43,6 @@ function endOfLocalDay(now: number): number {
 }
 
 export function groupOf(c: Countdown, now: number): Group {
-    if (c.completedAt) return 'Done'
     if (!c.hasTime) {
         const days = calendarDaysUntil(c, now)
         if (days < 0) return 'Overdue'
@@ -59,7 +57,7 @@ export function groupOf(c: Countdown, now: number): Group {
     return 'Later'
 }
 
-const ORDER: Group[] = ['Overdue', 'Today', 'This week', 'Later', 'Done']
+const ORDER: Group[] = ['Overdue', 'Today', 'This week', 'Later']
 
 export function groupCountdowns(
     list: Countdown[],
@@ -72,20 +70,14 @@ export function groupCountdowns(
     }
     return ORDER.filter((g) => buckets.has(g)).map((group) => ({
         group,
-        items: buckets
-            .get(group)!
-            .sort((a, b) =>
-                group === 'Done'
-                    ? (b.completedAt ?? '').localeCompare(a.completedAt ?? '')
-                    : a.dueAt.localeCompare(b.dueAt)
-            )
+        items: buckets.get(group)!.sort((a, b) => a.dueAt.localeCompare(b.dueAt))
     }))
 }
 
 /** True when anything is due within the hour (renderer ticks every second instead of every 30s). */
 export function needsFastTick(list: Countdown[], now: number): boolean {
     return list.some((c) => {
-        if (c.completedAt || !c.hasTime) return false
+        if (!c.hasTime) return false
         const ms = new Date(c.dueAt).getTime() - now
         return ms > 0 && ms < HOUR
     })
@@ -98,7 +90,6 @@ export interface BigNumber {
 
 /** The large figure shown on the left of a row: days until due, dropping to hours/minutes under a day. */
 export function bigNumber(c: Countdown, now: number): BigNumber {
-    if (c.completedAt) return { value: '✓', unit: 'done' }
     if (!c.hasTime) {
         const days = calendarDaysUntil(c, now)
         if (days < 0) return { value: `${-days}d`, unit: 'overdue' }
@@ -126,11 +117,10 @@ export function bigNumber(c: Countdown, now: number): BigNumber {
 }
 
 /**
- * How far along a countdown is, 0..1, from its start date to its due date. Done = full.
+ * How far along a countdown is, 0..1, from its start date to its due date.
  * Date-only countdowns count calendar days like everything else; timed ones use the clock.
  */
 export function progressOf(c: Countdown, now: number): number {
-    if (c.completedAt) return 1
     const start = new Date(c.startAt).getTime()
     const due = new Date(c.dueAt).getTime()
     const [elapsed, total] = c.hasTime

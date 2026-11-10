@@ -41,7 +41,6 @@ export const CountdownPatchSchema = z.object(countdownFields).partial()
 /** A stored countdown. Defaults make older/hand-edited files load safely. */
 export const CountdownSchema = CountdownInputSchema.extend({
     id: z.string(),
-    completedAt: z.string().optional(),
     createdAt: z.string()
 })
 

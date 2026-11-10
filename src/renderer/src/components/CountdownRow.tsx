@@ -1,4 +1,4 @@
-import { ArrowRight, CircleCheck, CircleDashed, Trash2 } from 'lucide-react'
+import { ArrowRight, Trash2 } from 'lucide-react'
 import type { Category, Countdown } from '@shared/types'
 import { formatTimeOfDay, type TimeFormat } from '../lib/dates'
 import { bigNumber, progressOf, urgencyOf, type Urgency } from '../lib/time'
@@ -9,8 +9,7 @@ const numberColor: Record<Urgency, string> = {
     overdue: 'text-danger',
     soon: 'text-warn',
     today: 'text-fg',
-    later: 'text-fg',
-    done: 'text-faint'
+    later: 'text-fg'
 }
 
 const shortDate = (d: Date): string => d.toLocaleDateString([], { month: 'short', day: 'numeric' })
@@ -33,19 +32,18 @@ export function CountdownRow({
     /** Clicking the row (or Enter on it) opens the countdown for editing. */
     onEdit: () => void
 }): React.JSX.Element {
-    const done = !!item.completedAt
     const urgency = urgencyOf(item, now)
     const num = bigNumber(item, now)
     const progress = progressOf(item, now)
-    // Rounded down so it only reads 100% once it really is (or the entry is done).
+    // Rounded down so it only reads 100% once it really is.
     const percent = Math.floor(progress * 100)
     const due = new Date(item.dueAt)
     const start = new Date(item.startAt)
 
     // Bright = needs attention, dim = can wait (same rule as the reference).
     const attention = urgency === 'overdue' || urgency === 'soon' || urgency === 'today'
-    const titleClass = done ? 'text-faint' : attention ? 'text-fg' : 'text-muted'
-    const nameClass = done ? 'text-faint' : attention ? 'text-fg/80' : 'text-muted'
+    const titleClass = attention ? 'text-fg' : 'text-muted'
+    const nameClass = attention ? 'text-fg/80' : 'text-muted'
     // The bar is the category's color (neutral grey when it has none), whatever the status.
     const barColor = category ? `var(--cat-${category.color})` : undefined
     const statusClass =
@@ -93,7 +91,7 @@ export function CountdownRow({
                             <ArrowRight size={12} />
                             {shortDate(due)}
                             {item.hasTime && (
-                                <span className={done ? '' : attention ? statusClass : ''}>
+                                <span className={attention ? statusClass : ''}>
                                     {'· '}
                                     {formatTimeOfDay(due, timeFormat)}
                                 </span>
@@ -112,43 +110,19 @@ export function CountdownRow({
                     )}
                 </div>
 
-                <div className="flex shrink-0 flex-col items-end self-start pr-1.5">
-                    <div className="flex h-[22px] items-center">
-                        <Tooltip
-                            label={done ? 'Mark not done' : 'Mark done'}
-                            side="bottom"
-                            align="end"
+                <div className="flex h-[22px] shrink-0 items-center self-start pr-1.5">
+                    <Tooltip label="Delete" side="bottom" align="end">
+                        <button
+                            aria-label="Delete"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                void window.api.invoke('countdown:delete', item.id)
+                            }}
+                            className="text-faint opacity-0 group-hover:opacity-100 hover:text-danger focus-visible:opacity-100"
                         >
-                            <button
-                                aria-label={done ? 'Mark not done' : 'Mark done'}
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    void window.api.invoke('countdown:complete', item.id, !done)
-                                }}
-                                className={
-                                    done
-                                        ? 'text-ok'
-                                        : 'text-faint opacity-0 group-hover:opacity-100 hover:text-ok focus-visible:opacity-100'
-                                }
-                            >
-                                {done ? <CircleCheck size={18} /> : <CircleDashed size={18} />}
-                            </button>
-                        </Tooltip>
-                    </div>
-                    <div className="mt-0.5 flex h-5 items-center">
-                        <Tooltip label="Delete" side="bottom" align="end">
-                            <button
-                                aria-label="Delete"
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    void window.api.invoke('countdown:delete', item.id)
-                                }}
-                                className="text-faint opacity-0 group-hover:opacity-100 hover:text-danger focus-visible:opacity-100"
-                            >
-                                <Trash2 size={15} />
-                            </button>
-                        </Tooltip>
-                    </div>
+                            <Trash2 size={15} />
+                        </button>
+                    </Tooltip>
                 </div>
             </div>
 

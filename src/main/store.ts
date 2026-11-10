@@ -43,18 +43,6 @@ export function updateCountdown(id: string, patch: CountdownPatch): Countdown | 
     return updated
 }
 
-export function setCompleted(id: string, done: boolean): Countdown | null {
-    const state = getState()
-    const existing = state.countdowns.find((c) => c.id === id)
-    if (!existing) return null
-    const updated: Countdown = {
-        ...existing,
-        completedAt: done ? new Date().toISOString() : undefined
-    }
-    save({ ...state, countdowns: state.countdowns.map((c) => (c.id === id ? updated : c)) })
-    return updated
-}
-
 export function deleteCountdown(id: string): boolean {
     const state = getState()
     const next = state.countdowns.filter((c) => c.id !== id)

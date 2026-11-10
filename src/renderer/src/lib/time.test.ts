@@ -20,7 +20,6 @@ describe('groupOf / urgencyOf', () => {
         expect(groupOf(make('2026-11-10T18:00:00'), NOW)).toBe('Today')
         expect(groupOf(make('2026-11-14T09:00:00'), NOW)).toBe('This week')
         expect(groupOf(make('2026-12-30T09:00:00'), NOW)).toBe('Later')
-        expect(groupOf(make('2026-11-14T09:00:00', { completedAt: 'x' }), NOW)).toBe('Done')
     })
     it('flags urgency', () => {
         expect(urgencyOf(make('2026-11-10T13:00:00'), NOW)).toBe('soon')
@@ -37,12 +36,11 @@ describe('bigNumber', () => {
         expect(bigNumber(make('2026-11-10T17:30:00'), NOW)).toEqual({ value: '5', unit: 'hrs' })
         expect(bigNumber(make('2026-11-10T12:08:00'), NOW)).toEqual({ value: '8', unit: 'min' })
     })
-    it('marks overdue and done', () => {
+    it('marks overdue', () => {
         expect(bigNumber(make('2026-11-08T12:00:00'), NOW)).toEqual({
             value: '2d',
             unit: 'overdue'
         })
-        expect(bigNumber(make('2026-11-14T12:00:00', { completedAt: 'x' }), NOW).value).toBe('✓')
     })
 })
 
@@ -96,8 +94,7 @@ describe('progressOf', () => {
         expect(progressOf(dateOnly('2026-11-10', '2026-11-08'), NOW)).toBe(1)
         expect(progressOf(dateOnly('2026-11-20', '2026-11-10'), NOW)).toBe(0)
     })
-    it('is full when done, and empty for a zero-length span that has not arrived', () => {
-        expect(progressOf(make('2026-12-01T00:00:00', { completedAt: 'x' }), NOW)).toBe(1)
+    it('is empty for a zero-length span that has not arrived', () => {
         const sameDay = make('2026-11-12T00:00:00', {
             startAt: new Date('2026-11-12T00:00:00').toISOString()
         })

@@ -34,7 +34,6 @@
     --accent-fg: #ffffff; /* text on top of --accent */
     --danger: #d6453d; /* overdue */
     --warn: #c77b12; /* due soon */
-    --ok: #2f9e6b; /* completed */
     --info: #3b7fd9; /* in-progress / urgent status */
 
     /* Category colors (same in light and dark). Stored on a category by name. */
@@ -68,7 +67,6 @@
         --accent-fg: #111113;
         --danger: #f0716a;
         --warn: #e0a043;
-        --ok: #4cc38a;
         --info: #5b9df0;
     }
 }
@@ -77,7 +75,7 @@
    TAILWIND MAPPING
    Exposes the variables above as utility classes:
    bg-bg  bg-elevated  bg-hover  border-line  text-fg  text-muted  text-faint
-   bg-accent  text-accent-fg  text-danger  text-warn  text-ok  text-info
+   bg-accent  text-accent-fg  text-danger  text-warn  text-info
    Add a new color: define it in the block above, then map it here.
    ========================================================================== */
 @theme inline {
@@ -92,7 +90,6 @@
     --color-accent-fg: var(--accent-fg);
     --color-danger: var(--danger);
     --color-warn: var(--warn);
-    --color-ok: var(--ok);
     --color-info: var(--info);
 
     --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;

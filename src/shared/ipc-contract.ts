@@ -12,7 +12,6 @@ export interface IpcInvoke {
     'state:get': { args: []; result: StoreData }
     'countdown:add': { args: [CountdownInput]; result: Countdown }
     'countdown:update': { args: [string, CountdownPatch]; result: Countdown | null }
-    'countdown:complete': { args: [string, boolean]; result: Countdown | null }
     'countdown:delete': { args: [string]; result: boolean }
     'category:add': { args: [Omit<Category, 'id'>]; result: Category }
     'category:update': { args: [string, Partial<Omit<Category, 'id'>>]; result: Category | null }

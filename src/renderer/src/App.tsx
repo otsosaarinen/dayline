@@ -47,7 +47,7 @@ export default function App(): React.JSX.Element {
         )
     }, [countdowns, query, activeFilter])
     // Flat list (no group headings, like the design); grouping still decides the order:
-    // overdue, today, this week, later, done.
+    // overdue, today, this week, later.
     const flat = useMemo(
         () => groupCountdowns(filtered, now).flatMap((g) => g.items),
         [filtered, now]

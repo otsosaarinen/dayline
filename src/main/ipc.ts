@@ -33,7 +33,6 @@ export function registerIpc(opts: { hidePopover: () => void; onChange: () => voi
         'countdown:add': (input) => changed(store.addCountdown(CountdownInputSchema.parse(input))),
         'countdown:update': (id, patch) =>
             changed(store.updateCountdown(id, CountdownPatchSchema.parse(patch))),
-        'countdown:complete': (id, done) => changed(store.setCompleted(id, done)),
         'countdown:delete': (id) => changed(store.deleteCountdown(id)),
         'category:add': (input) =>
             changed(store.addCategory(CategorySchema.omit({ id: true }).parse(input))),
