@@ -4,8 +4,8 @@ import { is } from '@electron-toolkit/utils'
 import trayIcon from '../../resources/trayTemplate.png?asset'
 import trayIcon2x from '../../resources/trayTemplate@2x.png?asset'
 
-const WIDTH = 360
-const HEIGHT = 480
+const WIDTH = 340
+const HEIGHT = 560
 
 /** Owns the menu bar icon and the popover window that hangs off it. */
 export class TrayController {
@@ -63,11 +63,7 @@ export class TrayController {
         return win
     }
 
-    get window(): BrowserWindow {
-        return this.win
-    }
-
-    toggle(): void {
+    private toggle(): void {
         if (this.win.isVisible()) this.hide()
         else this.show()
     }
@@ -86,10 +82,5 @@ export class TrayController {
         this.win.setPosition(x, y, false)
         this.win.show()
         this.win.focus()
-    }
-
-    /** Text shown next to the icon in the menu bar (e.g. "2d"). Empty string clears it. */
-    setTitle(title: string): void {
-        this.tray.setTitle(title)
     }
 }

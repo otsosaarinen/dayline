@@ -21,26 +21,10 @@ export function addCountdown(input: CountdownInput): Countdown {
     const countdown: Countdown = {
         ...input,
         id: randomUUID(),
-        createdAt: new Date().toISOString(),
-        notified: { lead: [], due: false }
+        createdAt: new Date().toISOString()
     }
     save({ ...state, countdowns: [...state.countdowns, countdown] })
     return countdown
-}
-
-export function updateCountdown(id: string, patch: Partial<CountdownInput>): Countdown | null {
-    const state = getState()
-    const existing = state.countdowns.find((c) => c.id === id)
-    if (!existing) return null
-    // Changing the due time or lead alerts re-arms notifications.
-    const rearm = patch.dueAt !== undefined || patch.notifyLeadMinutes !== undefined
-    const updated: Countdown = {
-        ...existing,
-        ...patch,
-        notified: rearm ? { lead: [], due: false } : existing.notified
-    }
-    save({ ...state, countdowns: state.countdowns.map((c) => (c.id === id ? updated : c)) })
-    return updated
 }
 
 export function setCompleted(id: string, done: boolean): Countdown | null {
@@ -67,6 +51,15 @@ export function addCategory(input: Omit<Category, 'id'>): Category {
     const category: Category = { ...input, id: randomUUID() }
     save({ ...state, categories: [...state.categories, category] })
     return category
+}
+
+export function updateCategory(id: string, patch: Partial<Omit<Category, 'id'>>): Category | null {
+    const state = getState()
+    const existing = state.categories.find((c) => c.id === id)
+    if (!existing) return null
+    const updated: Category = { ...existing, ...patch }
+    save({ ...state, categories: state.categories.map((c) => (c.id === id ? updated : c)) })
+    return updated
 }
 
 export function deleteCategory(id: string): boolean {

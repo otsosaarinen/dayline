@@ -1,7 +1,9 @@
-import { app, BrowserWindow } from 'electron'
-import { electronApp, optimizer } from '@electron-toolkit/utils'
+import { app } from 'electron'
+import { optimizer } from '@electron-toolkit/utils'
 import { TrayController } from './tray'
 import { registerIpc } from './ipc'
+import { getState } from './store'
+import { applyTheme } from './theme'
 
 let tray: TrayController | null = null
 
@@ -9,7 +11,6 @@ if (!app.requestSingleInstanceLock()) {
     app.quit()
 } else {
     app.whenReady().then(() => {
-        electronApp.setAppUserModelId('com.countdown.app')
         // Menu-bar-only app: no Dock icon.
         app.dock?.hide()
 
@@ -17,18 +18,20 @@ if (!app.requestSingleInstanceLock()) {
             optimizer.watchWindowShortcuts(window)
         })
 
+        // Before any window exists, so the first paint (and vibrancy) is already themed.
+        applyTheme(getState().settings.theme)
+
         tray = new TrayController()
         registerIpc({
             hidePopover: () => tray?.hide(),
             onChange: () => {
-                // Scheduler / tray title hooks land here (build step 6).
+                applyTheme(getState().settings.theme)
             }
         })
     })
 
     // Keep running with no visible windows; the tray is the app.
     app.on('window-all-closed', () => {})
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) tray?.show()
-    })
+    // Launching the already-running app again (Spotlight, Finder) shows the popover.
+    app.on('activate', () => tray?.show())
 }
