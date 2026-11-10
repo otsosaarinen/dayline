@@ -49,11 +49,11 @@ import {
 } from 'lucide-react'
 
 /**
- * Icons a user can attach to a countdown. Curated (not all of lucide) so the picker stays
+ * Icons a user can give a category. Curated (not all of lucide) so the picker stays
  * usable and the bundle small. The stored value is the key (e.g. "BookOpen"), so keys must
  * stay stable. Add icons here, don't rename.
  */
-export const ENTRY_ICONS: Record<string, LucideIcon> = {
+export const CATEGORY_ICONS: Record<string, LucideIcon> = {
     BookOpen,
     GraduationCap,
     FileText,
@@ -102,4 +102,4 @@ export const ENTRY_ICONS: Record<string, LucideIcon> = {
     Users
 }
 
-export const ENTRY_ICON_NAMES = Object.keys(ENTRY_ICONS)
+export const CATEGORY_ICON_NAMES = Object.keys(CATEGORY_ICONS)

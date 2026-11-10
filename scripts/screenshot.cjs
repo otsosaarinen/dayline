@@ -26,18 +26,17 @@ const base = (o) => ({
     ...o
 })
 const seed = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     settings: { theme: process.env.THEME || 'dark' },
     categories: [
-        { id: 'c1', name: 'Thesis', color: 'orange' },
-        { id: 'c2', name: 'Physics', color: 'blue' },
+        { id: 'c1', name: 'Thesis', color: 'orange', icon: 'GraduationCap' },
+        { id: 'c2', name: 'Physics', color: 'blue', icon: 'FlaskConical' },
         { id: 'c3', name: 'Personal', color: 'pink' }
     ],
     countdowns: [
         base({
             id: '1',
             title: 'Physics lab report',
-            icon: 'Pin',
             categoryId: 'c2',
             dueAt: inHours(5),
             hasTime: true,

@@ -4,7 +4,6 @@ import { REMINDER_OPTIONS } from '../lib/reminders'
 import { addDays, toDateValue, type TimeFormat } from '../lib/dates'
 import { CategorySelect } from './CategorySelect'
 import { DateField } from './DateField'
-import { IconPicker } from './IconPicker'
 import { Kbd } from './Kbd'
 import { SubmitButton } from './SubmitButton'
 import { ReminderSelect } from './ReminderSelect'
@@ -25,7 +24,6 @@ export function AddForm({
     const [time, setTime] = useState<string | null>(null) // null = date only
     const [leads, setLeads] = useState<number[]>([])
     const [categoryId, setCategoryId] = useState<string | undefined>()
-    const [icon, setIcon] = useState<string | undefined>()
 
     const canSubmit = title.trim().length > 0
 
@@ -41,7 +39,6 @@ export function AddForm({
         await window.api.invoke('countdown:add', {
             title: title.trim(),
             description: description.trim() || undefined,
-            icon,
             categoryId,
             dueAt: due.toISOString(),
             hasTime: time !== null,
@@ -88,7 +85,6 @@ export function AddForm({
                     value={categoryId}
                     onChange={setCategoryId}
                 />
-                <IconPicker value={icon} onChange={setIcon} />
                 <ReminderSelect value={leads} onChange={setLeads} withTime={time !== null} />
             </div>
 

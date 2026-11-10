@@ -1,6 +1,6 @@
 import { Folder } from 'lucide-react'
 import type { Category } from '@shared/types'
-import { CategorySquare } from './CategorySquare'
+import { CategoryMark } from './CategoryMark'
 import { FieldRow } from './FieldRow'
 import { Menu, MenuItem } from './Menu'
 
@@ -27,7 +27,7 @@ export function CategorySelect({
                     value={
                         current ? (
                             <>
-                                <CategorySquare category={current} size={16} />
+                                <CategoryMark category={current} size={16} />
                                 <span className="truncate">{current.name}</span>
                             </>
                         ) : (
@@ -59,7 +59,7 @@ export function CategorySelect({
                                 close()
                             }}
                         >
-                            <CategorySquare category={c} size={18} />
+                            <CategoryMark category={c} size={18} />
                             {c.name}
                         </MenuItem>
                     ))}

@@ -6,10 +6,10 @@ Built with Electron, React, Tailwind and TypeScript.
 
 ## Features
 
-- Countdowns with a due date, optional time of day, description, category, icon and reminders
+- Countdowns with a due date, optional time of day, description, category and reminders
 - A big day counter per entry (hours or minutes under a day), sorted by urgency
 - Search, and filtering by category
-- Categories with colors: create, rename, recolor, delete
+- Categories with a color and an icon: create, edit, delete
 - System, dark and light themes, and a 12- or 24-hour clock (24-hour by default)
 
 Not built yet: native notifications (reminders are saved but don't fire), editing an existing countdown, a global shortcut, and launch at login.

@@ -3,7 +3,8 @@ import { Check, Folder, Pencil, Plus, Trash2 } from 'lucide-react'
 import { CATEGORY_COLORS, type CategoryColor } from '@shared/constants'
 import type { Category } from '@shared/types'
 import { CATEGORY_SHEEN, nextCategoryColor } from '../lib/categories'
-import { CategorySquare } from './CategorySquare'
+import { CategoryMark } from './CategoryMark'
+import { IconGrid } from './IconGrid'
 import { IconButton } from './IconButton'
 import { Menu, MenuItem } from './Menu'
 import { SubmitButton } from './SubmitButton'
@@ -85,17 +86,18 @@ function MenuBody({
                         key={c.id}
                         initialName={c.name}
                         initialColor={c.color}
+                        initialIcon={c.icon}
                         placeholder="Category name"
                         submitLabel="Save"
-                        onSubmit={async (name, color) => {
-                            await window.api.invoke('category:update', c.id, { name, color })
+                        onSubmit={async (name, color, icon) => {
+                            await window.api.invoke('category:update', c.id, { name, color, icon })
                             setEditingId(null)
                         }}
                     />
                 ) : (
                     <div key={c.id} className="group/row relative">
                         <MenuItem selected={activeFilter === c.id} onClick={() => onFilter(c.id)}>
-                            <CategorySquare category={c} size={18} />
+                            <CategoryMark category={c} size={18} />
                             <span className="truncate">{c.name}</span>
                         </MenuItem>
                         <div className="absolute top-1/2 right-1.5 hidden -translate-y-1/2 items-center group-hover/row:flex">
@@ -133,10 +135,11 @@ function MenuBody({
                 <CategoryEditor
                     initialName=""
                     initialColor={nextCategoryColor(categories)}
+                    initialIcon={undefined}
                     placeholder="Category name"
                     submitLabel="Create"
-                    onSubmit={async (name, color) => {
-                        await window.api.invoke('category:add', { name, color })
+                    onSubmit={async (name, color, icon) => {
+                        await window.api.invoke('category:add', { name, color, icon })
                         setCreating(false)
                     }}
                 />
@@ -159,23 +162,26 @@ function MenuBody({
 function CategoryEditor({
     initialName,
     initialColor,
+    initialIcon,
     placeholder,
     submitLabel,
     onSubmit
 }: {
     initialName: string
     initialColor: CategoryColor
+    initialIcon: string | undefined
     placeholder: string
     submitLabel: string
-    onSubmit: (name: string, color: CategoryColor) => Promise<void>
+    onSubmit: (name: string, color: CategoryColor, icon: string | undefined) => Promise<void>
 }): React.JSX.Element {
     const [name, setName] = useState(initialName)
     const [color, setColor] = useState<CategoryColor>(initialColor)
+    const [icon, setIcon] = useState(initialIcon)
     const ref = useRef<HTMLDivElement>(null)
 
     const save = (): void => {
         const trimmed = name.trim()
-        if (trimmed) void onSubmit(trimmed, color)
+        if (trimmed) void onSubmit(trimmed, color, icon)
     }
 
     // On the window, not the input: after clicking a swatch, focus is on the swatch (or the
@@ -215,7 +221,7 @@ function CategoryEditor({
                     />
                 </div>
             </div>
-            {/* The one place color is shown and chosen (the check marks the selected one). */}
+            {/* Color is chosen here (the check marks the selected one); the icon below is tinted with it. */}
             <div className="mt-2.5 flex items-center gap-1.5">
                 {CATEGORY_COLORS.map((c) => (
                     <button
@@ -234,6 +240,7 @@ function CategoryEditor({
                     </button>
                 ))}
             </div>
+            <IconGrid value={icon} onChange={setIcon} />
         </div>
     )
 }

@@ -2,8 +2,7 @@ import { CircleCheck, CircleDashed, Trash2 } from 'lucide-react'
 import type { Category, Countdown } from '@shared/types'
 import { formatTimeOfDay, type TimeFormat } from '../lib/dates'
 import { bigNumber, urgencyOf, type Urgency } from '../lib/time'
-import { CategorySquare } from './CategorySquare'
-import { EntryIcon } from './EntryIcon'
+import { CategoryMark } from './CategoryMark'
 import { Tooltip } from './Tooltip'
 
 const numberColor: Record<Urgency, string> = {
@@ -14,8 +13,9 @@ const numberColor: Record<Urgency, string> = {
     done: 'text-faint'
 }
 
-/** Width of the category square + gap. Lines 2/3 and an icon'd title all align to this. */
-const INDENT = 26
+/** Category mark size, and the indent (mark + gap) the description lines up under. */
+const MARK = 14
+const INDENT = MARK + 8
 
 export function CountdownRow({
     item,
@@ -54,32 +54,22 @@ export function CountdownRow({
             </div>
 
             <div className="min-w-0 flex-1">
-                {/* Line 1: title (an optional icon sits in the indent column, like the pin) */}
-                <div className="flex h-[22px] items-center">
-                    {item.icon && (
-                        <span
-                            className="flex shrink-0 items-center text-faint"
-                            style={{ width: INDENT }}
-                        >
-                            <EntryIcon name={item.icon} size={15} />
-                        </span>
-                    )}
-                    <span className={`truncate text-[16px] leading-[22px] ${titleClass}`}>
-                        {item.title}
-                    </span>
+                {/* Line 1: title */}
+                <div className={`truncate text-[16px] leading-[22px] ${titleClass}`}>
+                    {item.title}
                 </div>
 
-                {/* Line 2: category chip + date */}
-                <div className="mt-0.5 flex h-[22px] items-center gap-2 text-[15px]">
+                {/* Line 2: category + date */}
+                <div className="mt-0.5 flex h-5 items-center gap-2 text-[13px]">
                     {category && (
                         <span className="flex min-w-0 items-center gap-2">
-                            <CategorySquare category={category} size={18} />
+                            <CategoryMark category={category} size={MARK} />
                             <span className={`truncate font-medium ${nameClass}`}>
                                 {category.name}
                             </span>
                         </span>
                     )}
-                    <span className="shrink-0 text-[14px] whitespace-nowrap text-faint">
+                    <span className="shrink-0 whitespace-nowrap text-faint">
                         {due.toLocaleDateString([], {
                             month: 'short',
                             day: 'numeric'
@@ -96,7 +86,7 @@ export function CountdownRow({
                 {/* Line 3: description, indented to line up under the category name */}
                 {item.description && (
                     <div
-                        className="mt-0.5 h-[21px] truncate text-[14px] leading-[21px] text-faint"
+                        className="mt-0.5 h-5 truncate text-[13px] leading-5 text-faint"
                         style={{ paddingLeft: category ? INDENT : 0 }}
                     >
                         {item.description}
@@ -120,7 +110,7 @@ export function CountdownRow({
                         </button>
                     </Tooltip>
                 </div>
-                <div className="mt-0.5 flex h-[22px] items-center">
+                <div className="mt-0.5 flex h-5 items-center">
                     <Tooltip label="Delete" side="bottom" align="end">
                         <button
                             aria-label="Delete"
