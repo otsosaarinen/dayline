@@ -26,7 +26,6 @@
         "typecheck": "npm run typecheck:node && npm run typecheck:web",
         "test": "vitest run",
         "dev": "electron-vite dev",
-        "start": "electron-vite preview",
         "build": "npm run typecheck && electron-vite build",
         "postinstall": "install-electron"
     },
