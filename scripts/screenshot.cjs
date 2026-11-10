@@ -69,6 +69,13 @@ const seed = {
             hasTime: false
         }),
         base({
+            id: '6',
+            title: 'Whole year, no category',
+            startAt: new Date(new Date().getFullYear(), 0, 1).toISOString(),
+            dueAt: new Date(new Date().getFullYear(), 11, 31).toISOString(),
+            hasTime: false
+        }),
+        base({
             id: '5',
             startAt: day(-8),
             title: 'Read the attention paper',
