@@ -11,6 +11,7 @@ export interface IpcInvoke {
     'category:delete': { args: [string]; result: boolean }
     'settings:update': { args: [Partial<Settings>]; result: Settings }
     'popover:hide': { args: []; result: void }
+    'app:openRepo': { args: []; result: void }
 }
 
 /** Main -> renderer push events. */

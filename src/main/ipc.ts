@@ -1,10 +1,11 @@
-import { BrowserWindow, ipcMain } from 'electron'
+import { BrowserWindow, ipcMain, shell } from 'electron'
 import {
     CategoryPatchSchema,
     CountdownInputSchema,
     SettingsPatchSchema,
     CategorySchema
 } from '@shared/schemas'
+import { REPO_URL } from '@shared/constants'
 import type { IpcEvents, IpcInvoke } from '@shared/ipc-contract'
 import * as store from './store'
 
@@ -38,7 +39,11 @@ export function registerIpc(opts: { hidePopover: () => void; onChange: () => voi
         'category:delete': (id) => changed(store.deleteCategory(id)),
         'settings:update': (patch) =>
             changed(store.updateSettings(SettingsPatchSchema.parse(patch))),
-        'popover:hide': () => opts.hidePopover()
+        'popover:hide': () => opts.hidePopover(),
+        // Only ever opens the fixed repository URL, never a URL supplied by the renderer.
+        'app:openRepo': () => {
+            if (REPO_URL.startsWith('https://')) void shell.openExternal(REPO_URL)
+        }
     }
 
     for (const channel of Object.keys(handlers) as (keyof IpcInvoke)[]) {
