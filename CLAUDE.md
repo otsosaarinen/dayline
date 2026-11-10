@@ -33,7 +33,7 @@ macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a pop
 ## Navigation and input
 
 - **One screen at a time:** `App` has a single `view` (`list` | `add` | `settings`). Settings is a full screen with a Back row, and New countdown is a full screen with Cancel and Add at the bottom (leaving it discards the draft). Neither is ever a panel layered over the list. Every screen change goes through `go()` in `App.tsx`, which also closes the categories menu so nothing lingers underneath.
-- **All keyboard shortcuts live in `App.tsx`.** Shortcuts and header icons only _open_ a screen, never toggle it closed; leaving is Back (Settings), Cancel (New countdown) or Esc. Shortcuts must work from any screen.
+- **All keyboard shortcuts live in `App.tsx`.** Shortcuts and header icons only _open_ a screen, never toggle it closed; leaving is Back (Settings), Cancel (New countdown) or Esc. Shortcuts must work from any screen. The one exception is ⌘↵ in `AddForm` (it needs the form state); it listens on `window`, not the form, because focus drops to the page background after a dropdown closes.
 - **Escape has a single owner:** an open `Menu` swallows it first, otherwise `App` steps back to the list (or clears search, or hides the popover). Don't add per-component Escape handlers; a second handler on the same keypress would hide the popover.
 
 ## Data model

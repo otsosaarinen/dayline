@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Category } from '@shared/types'
 import { REMINDER_OPTIONS } from '../lib/reminders'
 import { addDays, toDateValue, type TimeFormat } from '../lib/dates'
@@ -50,14 +50,21 @@ export function AddForm({
         onClose()
     }
 
+    // On the window, not the form: after picking from a dropdown, focus is on the page
+    // background and a form-level handler would never see the keypress.
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent): void => {
+            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault()
+                void submit()
+            }
+        }
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+    })
+
     return (
-        <form
-            onSubmit={submit}
-            onKeyDown={(e) => {
-                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) void submit()
-            }}
-            className="relative flex-1 px-5 pt-2 pb-4"
-        >
+        <form onSubmit={submit} className="relative flex-1 px-5 pt-2 pb-4">
             <input
                 autoFocus
                 value={title}
