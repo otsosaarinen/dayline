@@ -6,15 +6,15 @@ import tailwindcss from '@tailwindcss/vite'
 const shared = resolve('src/shared')
 
 export default defineConfig({
-  main: { resolve: { alias: { '@shared': shared } } },
-  preload: { resolve: { alias: { '@shared': shared } } },
-  renderer: {
-    resolve: {
-      alias: {
-        '@renderer': resolve('src/renderer/src'),
-        '@shared': shared
-      }
-    },
-    plugins: [react(), tailwindcss()]
-  }
+    main: { resolve: { alias: { '@shared': shared } } },
+    preload: { resolve: { alias: { '@shared': shared } } },
+    renderer: {
+        resolve: {
+            alias: {
+                '@renderer': resolve('src/renderer/src'),
+                '@shared': shared
+            }
+        },
+        plugins: [react(), tailwindcss()]
+    }
 })

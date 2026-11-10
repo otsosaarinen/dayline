@@ -1,10 +1,10 @@
 import type { z } from 'zod'
 import type {
-  CategorySchema,
-  CountdownInputSchema,
-  CountdownSchema,
-  SettingsSchema,
-  StoreSchema
+    CategorySchema,
+    CountdownInputSchema,
+    CountdownSchema,
+    SettingsSchema,
+    StoreSchema
 } from './schemas'
 
 export type Category = z.infer<typeof CategorySchema>
