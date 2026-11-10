@@ -22,6 +22,7 @@ Not built yet: native notifications (reminders are saved but don't fire), editin
 | `⌘↵`  | Add (on the New countdown screen)                              |
 | `⌘⇧C` | Open the categories menu                                       |
 | `⌘F`  | Focus search                                                   |
+| `⌘⇧⌫` | Clear the category filter                                      |
 | `⌘,`  | Open settings                                                  |
 | `⌘Q`  | Quit Dayline                                                   |
 | `Esc` | Close the open dropdown, go back a screen, or hide the popover |

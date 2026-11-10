@@ -8,6 +8,7 @@ import { AddForm } from './components/AddForm'
 import { CategoryMenu } from './components/CategoryMenu'
 import { GithubLink } from './components/GithubLink'
 import { IconButton } from './components/IconButton'
+import { ClearFilter } from './components/ClearFilter'
 import { Kbd } from './components/Kbd'
 import { QuitButton } from './components/QuitButton'
 import { SettingsPanel } from './components/SettingsPanel'
@@ -78,6 +79,15 @@ export default function App(): React.JSX.Element {
             }
             if ((e.metaKey || e.ctrlKey) && e.key === ',') {
                 go('settings')
+            }
+            // Clear the category filter (⇧ keeps it from clashing with ⌘⌫ deleting text in search).
+            if (
+                (e.metaKey || e.ctrlKey) &&
+                e.shiftKey &&
+                e.key === 'Backspace' &&
+                view === 'list'
+            ) {
+                setFilterCategory(null)
             }
             if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'q') {
                 window.api.invoke('app:quit')
@@ -172,6 +182,9 @@ export default function App(): React.JSX.Element {
                                         </span>
                                     )}
                                 </div>
+                                {activeFilter && (
+                                    <ClearFilter onClick={() => setFilterCategory(null)} />
+                                )}
                             </div>
                         </div>
                     ) : (
@@ -186,6 +199,9 @@ export default function App(): React.JSX.Element {
                                 }
                             />
                         ))
+                    )}
+                    {activeFilter && flat.length > 0 && (
+                        <ClearFilter onClick={() => setFilterCategory(null)} />
                     )}
                 </main>
             )}
