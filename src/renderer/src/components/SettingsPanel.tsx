@@ -1,5 +1,6 @@
 import { Monitor, Moon, Sun, type LucideIcon } from 'lucide-react'
 import type { Settings } from '@shared/types'
+import { BackButton } from './BackButton'
 
 const THEMES: { value: Settings['theme']; label: string; hint: string; Icon: LucideIcon }[] = [
     { value: 'system', label: 'System', hint: 'Matches your Mac', Icon: Monitor },
@@ -16,12 +17,7 @@ export function SettingsPanel({
 }): React.JSX.Element {
     return (
         <div className="flex-1 space-y-6 overflow-y-auto px-5 pb-4">
-            <button
-                onClick={onBack}
-                className="-ml-1.5 rounded-md px-1.5 py-0.5 text-[13px] text-muted hover:bg-hover hover:text-fg"
-            >
-                ← Back
-            </button>
+            <BackButton onClick={onBack} />
 
             <section className="flex items-center justify-between">
                 <div>

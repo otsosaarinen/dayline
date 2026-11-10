@@ -1,4 +1,5 @@
 import type { Category } from '@shared/types'
+import { CATEGORY_SHEEN } from '../lib/categories'
 
 /** The colored rounded square that marks a category (the "project icon" in the design). Color only, no letter. */
 export function CategorySquare({
@@ -15,10 +16,9 @@ export function CategorySquare({
                 width: size,
                 height: size,
                 borderRadius: size * 0.28,
-                // Soft top-light gradient over the flat color, like the reference icons.
+                // Faint diagonal highlight over the flat color, like the reference icons.
                 backgroundColor: `var(--cat-${category.color})`,
-                backgroundImage:
-                    'linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0))',
+                backgroundImage: CATEGORY_SHEEN,
                 boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08)'
             }}
         />

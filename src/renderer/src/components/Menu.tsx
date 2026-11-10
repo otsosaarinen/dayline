@@ -3,14 +3,17 @@ import { useEffect, useRef, useState } from 'react'
 /**
  * Small dropdown: `trigger` renders the button, `children` renders the panel contents.
  * Closes on outside click and Escape. Escape is swallowed so it closes only the menu,
- * not the whole popover.
+ * not the whole popover. Uncontrolled by default; pass `open` + `onOpenChange` to drive it
+ * from outside (e.g. a keyboard shortcut).
  */
 export function Menu({
     trigger,
     children,
     align = 'left',
     anchorToParent = false,
-    panelClassName = ''
+    panelClassName = '',
+    open: controlledOpen,
+    onOpenChange
 }: {
     trigger: (state: { open: boolean; toggle: () => void }) => React.ReactNode
     children: (close: () => void) => React.ReactNode
@@ -18,8 +21,12 @@ export function Menu({
     /** Position the panel against the nearest positioned ancestor (e.g. a form) instead of the trigger. */
     anchorToParent?: boolean
     panelClassName?: string
+    open?: boolean
+    onOpenChange?: (open: boolean) => void
 }): React.JSX.Element {
-    const [open, setOpen] = useState(false)
+    const [innerOpen, setInnerOpen] = useState(false)
+    const open = controlledOpen ?? innerOpen
+    const setOpen = onOpenChange ?? setInnerOpen
     const ref = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -38,11 +45,11 @@ export function Menu({
             document.removeEventListener('mousedown', onDown)
             window.removeEventListener('keydown', onKey, true)
         }
-    }, [open])
+    }, [open, setOpen])
 
     return (
         <div ref={ref} className={anchorToParent ? '' : 'relative'}>
-            {trigger({ open, toggle: () => setOpen((o) => !o) })}
+            {trigger({ open, toggle: () => setOpen(!open) })}
             {open && (
                 <div
                     className={`absolute z-30 mt-1.5 min-w-48 rounded-xl border border-line bg-elevated p-1 shadow-2xl ${

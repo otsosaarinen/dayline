@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Search, Settings, SquarePen } from 'lucide-react'
 import { useStore } from './store/useStore'
 import { groupCountdowns } from './lib/time'
@@ -6,6 +6,7 @@ import { useNow } from './lib/useNow'
 import { CountdownRow } from './components/CountdownRow'
 import { AddForm } from './components/AddForm'
 import { CategoryMenu } from './components/CategoryMenu'
+import { GithubLink } from './components/GithubLink'
 import { IconButton } from './components/IconButton'
 import { Kbd } from './components/Kbd'
 import { SettingsPanel } from './components/SettingsPanel'
@@ -13,8 +14,9 @@ import { SettingsPanel } from './components/SettingsPanel'
 export default function App(): React.JSX.Element {
     const data = useStore((s) => s.data)
     const init = useStore((s) => s.init)
-    const [adding, setAdding] = useState(false)
-    const [view, setView] = useState<'list' | 'settings'>('list')
+    // One screen at a time. Opening one replaces the others, so nothing lingers underneath.
+    const [view, setView] = useState<'list' | 'add' | 'settings'>('list')
+    const [categoriesOpen, setCategoriesOpen] = useState(false)
     const [query, setQuery] = useState('')
     const [filterCategory, setFilterCategory] = useState<string | null>(null)
     const searchRef = useRef<HTMLInputElement>(null)
@@ -45,34 +47,45 @@ export default function App(): React.JSX.Element {
         [filtered, now]
     )
 
+    // Every screen change goes through here, so the categories menu never stays open
+    // behind a screen and pops back up later.
+    const go = useCallback((next: 'list' | 'add' | 'settings') => {
+        setView(next)
+        setCategoriesOpen(false)
+    }, [])
+
     useEffect(() => {
         const onKey = (e: KeyboardEvent): void => {
-            if (e.key === 'Escape' && !adding) {
-                if (view === 'settings') setView('list')
+            // Open dropdowns swallow Escape first (Menu). Otherwise step back one level.
+            if (e.key === 'Escape') {
+                if (view !== 'list') go('list')
                 else if (query) setQuery('')
                 else window.api.invoke('popover:hide')
             }
             if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
-                setView('list')
-                setAdding(true)
+                go('add')
             }
-            if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
-                setView('list')
-                searchRef.current?.focus()
+            if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'c') {
+                e.preventDefault()
+                go('list')
+                setCategoriesOpen(true)
+            }
+            if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key === 'f') {
+                go('list')
+                requestAnimationFrame(() => searchRef.current?.focus())
+            }
+            if ((e.metaKey || e.ctrlKey) && e.key === ',') {
+                go('settings')
             }
         }
         window.addEventListener('keydown', onKey)
         return () => window.removeEventListener('keydown', onKey)
-    }, [adding, view, query])
-
-    const inSettings = view === 'settings'
+    }, [view, query, go])
 
     return (
         <div className="flex h-full flex-col overflow-hidden rounded-xl border border-line bg-bg">
             <header className="drag flex items-center gap-2 pt-4 pr-2 pb-2.5 pl-3">
-                {inSettings ? (
-                    <h1 className="flex-1 text-[16px] font-semibold tracking-tight">Settings</h1>
-                ) : (
+                {view === 'list' ? (
                     <label className="no-drag flex flex-1 items-center gap-2.5 text-fg/60">
                         <Search size={17} />
                         <input
@@ -83,82 +96,86 @@ export default function App(): React.JSX.Element {
                             className="w-full bg-transparent text-[16px] text-fg outline-none placeholder:text-fg/60"
                         />
                     </label>
+                ) : (
+                    <h1 className="flex-1 text-[16px] font-semibold tracking-tight">
+                        {view === 'add' ? 'New countdown' : 'Settings'}
+                    </h1>
                 )}
                 <div className="no-drag flex items-center">
-                    {!inSettings && (
-                        <>
-                            <IconButton
-                                label="New countdown"
-                                shortcut={['⌘', 'N']}
-                                active={adding}
-                                onClick={() => {
-                                    setView('list')
-                                    setAdding(!adding)
-                                }}
-                            >
-                                <SquarePen size={17} />
-                            </IconButton>
-                            <CategoryMenu
-                                categories={categories}
-                                activeFilter={activeFilter}
-                                onFilter={setFilterCategory}
-                            />
-                        </>
+                    {view !== 'settings' && (
+                        <IconButton
+                            label="New countdown"
+                            shortcut={['⌘', 'N']}
+                            active={view === 'add'}
+                            onClick={() => go('add')}
+                        >
+                            <SquarePen size={17} />
+                        </IconButton>
                     )}
-                    <IconButton
-                        label={inSettings ? 'Close settings' : 'Settings'}
-                        active={inSettings}
-                        onClick={() => setView(inSettings ? 'list' : 'settings')}
-                    >
-                        <Settings size={17} />
-                    </IconButton>
+                    {view === 'list' && (
+                        <CategoryMenu
+                            categories={categories}
+                            activeFilter={activeFilter}
+                            onFilter={setFilterCategory}
+                            open={categoriesOpen}
+                            onOpenChange={setCategoriesOpen}
+                        />
+                    )}
+                    {view !== 'add' && (
+                        <IconButton
+                            label="Settings"
+                            shortcut={['⌘', ',']}
+                            active={view === 'settings'}
+                            onClick={() => go('settings')}
+                        >
+                            <Settings size={17} />
+                        </IconButton>
+                    )}
                 </div>
             </header>
 
-            {inSettings && data ? (
-                <SettingsPanel settings={data.settings} onBack={() => setView('list')} />
+            {view === 'settings' ? (
+                data && <SettingsPanel settings={data.settings} onBack={() => go('list')} />
+            ) : view === 'add' ? (
+                <AddForm categories={categories} onClose={() => go('list')} />
             ) : (
-                <>
-                    {adding && <AddForm categories={categories} onClose={() => setAdding(false)} />}
-
-                    <main className="flex-1 overflow-y-auto px-1.5 pb-3">
-                        {flat.length === 0 && !adding ? (
-                            <div className="grid h-full place-items-center text-center text-muted">
-                                <div>
-                                    <div className="text-[15px] text-fg">
-                                        {query || activeFilter
-                                            ? 'No matches'
-                                            : 'Nothing counting down'}
-                                    </div>
-                                    <div className="mt-1 text-[13px]">
-                                        {query || activeFilter ? (
-                                            'Try a different search or filter.'
-                                        ) : (
-                                            <span className="inline-flex items-center gap-1">
-                                                Press <Kbd>⌘</Kbd>
-                                                <Kbd>N</Kbd> to add your first one
-                                            </span>
-                                        )}
-                                    </div>
+                <main className="flex-1 overflow-y-auto px-1.5 pb-3">
+                    {flat.length === 0 ? (
+                        <div className="grid h-full place-items-center text-center text-muted">
+                            <div>
+                                <div className="text-[15px] text-fg">
+                                    {query || activeFilter ? 'No matches' : 'Nothing counting down'}
+                                </div>
+                                <div className="mt-1 text-[13px]">
+                                    {query || activeFilter ? (
+                                        'Try a different search or filter.'
+                                    ) : (
+                                        <span className="inline-flex items-center gap-1">
+                                            Press <Kbd>⌘</Kbd>
+                                            <Kbd>N</Kbd> to add your first one
+                                        </span>
+                                    )}
                                 </div>
                             </div>
-                        ) : (
-                            flat.map((item) => (
-                                <CountdownRow
-                                    key={item.id}
-                                    item={item}
-                                    now={now}
-                                    category={
-                                        item.categoryId
-                                            ? categoryById.get(item.categoryId)
-                                            : undefined
-                                    }
-                                />
-                            ))
-                        )}
-                    </main>
-                </>
+                        </div>
+                    ) : (
+                        flat.map((item) => (
+                            <CountdownRow
+                                key={item.id}
+                                item={item}
+                                now={now}
+                                category={
+                                    item.categoryId ? categoryById.get(item.categoryId) : undefined
+                                }
+                            />
+                        ))
+                    )}
+                </main>
             )}
+
+            <footer className="flex justify-end px-3 pb-2.5">
+                <GithubLink />
+            </footer>
         </div>
     )
 }

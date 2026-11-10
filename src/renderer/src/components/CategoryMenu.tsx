@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Check, Folder, Pencil, Plus, Trash2 } from 'lucide-react'
 import { CATEGORY_COLORS, type CategoryColor } from '@shared/constants'
 import type { Category } from '@shared/types'
-import { nextCategoryColor } from '../lib/categories'
+import { CATEGORY_SHEEN, nextCategoryColor } from '../lib/categories'
 import { CategorySquare } from './CategorySquare'
 import { IconButton } from './IconButton'
 import { Menu, MenuItem } from './Menu'
@@ -15,18 +15,30 @@ import { Tooltip } from './Tooltip'
 export function CategoryMenu({
     categories,
     activeFilter,
-    onFilter
+    onFilter,
+    open,
+    onOpenChange
 }: {
     categories: Category[]
     activeFilter: string | null
     onFilter: (id: string | null) => void
+    /** Controlled by App so ⌘⇧C can open it from any screen. */
+    open: boolean
+    onOpenChange: (open: boolean) => void
 }): React.JSX.Element {
     return (
         <Menu
             align="right"
             panelClassName="w-64"
+            open={open}
+            onOpenChange={onOpenChange}
             trigger={({ toggle }) => (
-                <IconButton label="Categories" active={!!activeFilter} onClick={toggle}>
+                <IconButton
+                    label="Categories"
+                    shortcut={['⌘', '⇧', 'C']}
+                    active={!!activeFilter}
+                    onClick={toggle}
+                >
                     <Folder size={17} />
                 </IconButton>
             )}
@@ -151,7 +163,6 @@ function CategoryEditor({
 }): React.JSX.Element {
     const [name, setName] = useState(initialName)
     const [color, setColor] = useState<CategoryColor>(initialColor)
-    const [pickingColor, setPickingColor] = useState(false)
 
     const save = (): void => {
         const trimmed = name.trim()
@@ -161,14 +172,7 @@ function CategoryEditor({
     return (
         <div className="p-1.5">
             <div className="flex items-center gap-2">
-                <button
-                    type="button"
-                    aria-label="Choose color"
-                    onClick={() => setPickingColor((p) => !p)}
-                    className="shrink-0"
-                >
-                    <CategorySquare category={{ color }} size={22} />
-                </button>
+                <Folder size={18} className="shrink-0 text-faint" />
                 <input
                     autoFocus
                     value={name}
@@ -191,30 +195,25 @@ function CategoryEditor({
                     </button>
                 </Tooltip>
             </div>
-            {pickingColor && (
-                <div className="mt-2.5 flex items-center gap-1.5 pl-0.5">
-                    {CATEGORY_COLORS.map((c) => (
-                        <button
-                            type="button"
-                            key={c}
-                            aria-label={c}
-                            aria-pressed={color === c}
-                            onClick={() => {
-                                setColor(c)
-                                setPickingColor(false)
-                            }}
-                            className="grid size-5 place-items-center rounded-md text-white transition-transform hover:scale-110"
-                            style={{
-                                backgroundColor: `var(--cat-${c})`,
-                                backgroundImage:
-                                    'linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0))'
-                            }}
-                        >
-                            {color === c && <Check size={12} strokeWidth={3} />}
-                        </button>
-                    ))}
-                </div>
-            )}
+            {/* The one place color is shown and chosen (the check marks the selected one). */}
+            <div className="mt-2.5 flex items-center gap-1.5">
+                {CATEGORY_COLORS.map((c) => (
+                    <button
+                        type="button"
+                        key={c}
+                        aria-label={c}
+                        aria-pressed={color === c}
+                        onClick={() => setColor(c)}
+                        className="grid size-[22px] place-items-center rounded-md text-white transition-transform hover:scale-110"
+                        style={{
+                            backgroundColor: `var(--cat-${c})`,
+                            backgroundImage: CATEGORY_SHEEN
+                        }}
+                    >
+                        {color === c && <Check size={13} strokeWidth={3} />}
+                    </button>
+                ))}
+            </div>
         </div>
     )
 }

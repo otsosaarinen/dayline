@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Category } from '@shared/types'
 import { REMINDER_OPTIONS } from '../lib/reminders'
 import { addDays, toDateValue } from '../lib/dates'
+import { BackButton } from './BackButton'
 import { CategorySelect } from './CategorySelect'
 import { DateField } from './DateField'
 import { IconPicker } from './IconPicker'
@@ -51,11 +52,13 @@ export function AddForm({
         <form
             onSubmit={submit}
             onKeyDown={(e) => {
-                if (e.key === 'Escape') onClose()
                 if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) void submit()
             }}
-            className="relative border-b border-line px-3 pb-3"
+            className="relative flex-1 px-5 pb-4"
         >
+            <div className="mb-4">
+                <BackButton onClick={onClose} />
+            </div>
             <input
                 autoFocus
                 value={title}
@@ -71,7 +74,7 @@ export function AddForm({
                 className="mt-1 max-h-24 min-h-[22px] w-full resize-none bg-transparent text-[14px] text-muted outline-none [field-sizing:content] placeholder:text-faint"
             />
 
-            <div className="-mx-1.5 mt-3 border-t border-line pt-1.5">
+            <div className="-mx-1.5 mt-4 border-t border-line pt-1.5">
                 <DateField value={date} onChange={setDate} />
                 <TimeField value={time} onChange={setTime} />
                 <CategorySelect
