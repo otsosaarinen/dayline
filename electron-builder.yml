@@ -5,7 +5,7 @@ directories:
 files:
     - '!**/.vscode/*'
     - '!{src,scripts,.github}/**'
-    - '!{electron.vite.config.ts,vitest.config.ts,eslint.config.mjs,.prettierignore,.prettierrc.yaml,.editorconfig,.node-version,.eslintcache}'
+    - '!{electron.vite.config.ts,vitest.config.ts,eslint.config.mjs,.prettierignore,.prettierrc.yaml,.node-version,.eslintcache}'
     - '!{CLAUDE.md,README.md}'
     - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 mac:
