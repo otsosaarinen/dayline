@@ -1,4 +1,4 @@
-# Countdown
+# Dayline
 
 A macOS menu bar app for countdowns and reminders: school deadlines, or anything else. Click the icon in the menu bar to see everything that's counting down.
 
@@ -64,7 +64,7 @@ scripts        Dev tools (tray icon generator, offscreen screenshot renderer)
 
 ## Data
 
-Stored as JSON in `~/Library/Application Support/countdown-app/countdowns.json`. Delete that file to reset the app.
+Stored as JSON in `~/Library/Application Support/dayline/countdowns.json`. Delete that file to reset the app.
 
 ## Code style
 

@@ -1,5 +1,5 @@
-appId: com.countdown.app
-productName: Countdown
+appId: com.dayline.app
+productName: Dayline
 directories:
     buildResources: build
 files:

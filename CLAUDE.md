@@ -1,4 +1,4 @@
-# Countdown
+# Dayline
 
 macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a popover. Linear / T3 Code style UI.
 

@@ -10,7 +10,7 @@ const out = path.resolve(process.argv[2] || 'screenshot.png')
 const pageScript = process.argv[3] || ''
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
-const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'countdown-shot-'))
+const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'dayline-shot-'))
 app.setPath('userData', userData)
 
 const day = (offset) => {

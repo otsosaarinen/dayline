@@ -1,9 +1,21 @@
 {
-    "name": "countdown-app",
-    "version": "1.0.0",
+    "name": "dayline",
+    "version": "0.1.0",
     "description": "macOS menu bar app for countdowns and reminders",
     "license": "MIT",
     "author": "Otso Saarinen",
+    "homepage": "https://github.com/otsosaarinen/dayline#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/otsosaarinen/dayline.git"
+    },
+    "bugs": {
+        "url": "https://github.com/otsosaarinen/dayline/issues"
+    },
+    "private": true,
+    "engines": {
+        "node": ">=24"
+    },
     "main": "./out/main/index.js",
     "scripts": {
         "format": "prettier --write .",
@@ -50,6 +62,5 @@
         "vite": "^8.3.4",
         "vitest": "^5.1.0",
         "zustand": "^5.1.0"
-    },
-    "private": true
+    }
 }

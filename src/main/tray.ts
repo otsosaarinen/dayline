@@ -20,7 +20,7 @@ export class TrayController {
         })
         image.setTemplateImage(true)
         this.tray = new Tray(image)
-        this.tray.setToolTip('Countdown')
+        this.tray.setToolTip('Dayline')
         this.tray.on('click', () => this.toggle())
 
         this.win = this.createWindow()
