@@ -83,6 +83,7 @@ export function CountdownRow({
                             </span>
                         )}
                         <span className="shrink-0 whitespace-nowrap text-faint">
+                            Due{' '}
                             {due.toLocaleDateString([], {
                                 month: 'short',
                                 day: 'numeric'
