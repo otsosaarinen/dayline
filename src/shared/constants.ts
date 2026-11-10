@@ -15,5 +15,5 @@ export const CATEGORY_COLORS = [
 
 export type CategoryColor = (typeof CATEGORY_COLORS)[number]
 
-/** The project's GitHub repository. Set this to its https:// URL and the footer icon starts working. */
-export const REPO_URL = ''
+/** The project's GitHub repository; the footer icon opens it. Must be an https:// URL. */
+export const REPO_URL = 'https://github.com/otsosaarinen/dayline'

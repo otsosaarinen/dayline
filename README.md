@@ -30,6 +30,8 @@ Not built yet: native notifications (reminders are saved but don't fire), editin
 Requires macOS, Node 24 (see `.node-version`, works with [fnm](https://github.com/Schniz/fnm)) and npm.
 
 ```bash
+git clone https://github.com/otsosaarinen/dayline.git
+cd dayline
 npm install
 npm run dev
 ```

@@ -50,9 +50,9 @@ macOS-only menu bar app for countdowns/reminders. Click the tray icon, get a pop
 - **Categories:** all management (filter, create, edit, delete) is in `CategoryMenu` (the folder icon). Don't add category UI elsewhere.
 - **List rows** (modeled on the Linear/T3 Code sidebar): popover is 340px wide; title 16px, category 15px, date and description 14px, search 16px; a two-line row is about 70px, plus 21px with a description. Lines: title (optional icon in a 26px indent column), category square + name + date (+ time), description indented under the name. Bright title = needs attention, dim = can wait. No group headings, no strike-through. The big number on the left is the one intentional deviation.
 - The panel is a soft charcoal (`--bg`), flat, translucent over macOS vibrancy.
-- The footer GitHub icon opens `REPO_URL` (`shared/constants.ts`, empty until the repo exists) through the `app:openRepo` IPC. Main only ever opens that fixed https URL.
+- The footer GitHub icon opens `REPO_URL` (`shared/constants.ts`) through the `app:openRepo` IPC. Main only ever opens that fixed https URL.
 
 ## Status
 
 Done: tray + popover, countdowns (optional time, description, category, icon, reminders setting), search, categories, themes, CI.
-Next: scheduler + native notifications, editing a countdown, global shortcut, launch at login, packaged releases (set `REPO_URL`, real app icon).
+Next: scheduler + native notifications, editing a countdown, global shortcut, launch at login, packaged releases (real app icon).
